@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+require("dotenv").config();
+const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth.route");
 
@@ -21,3 +23,18 @@ app.use((err, _, res, __) => {
     message,
   });
 });
+
+const PORT = process.env.PORT || 5001;
+const DB_HOST = process.env.DB_HOST;
+
+const conn = mongoose.connect(DB_HOST, { dbName: "chat_db" });
+
+conn
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`App is listening port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

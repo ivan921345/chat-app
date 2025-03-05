@@ -3,3 +3,5 @@ const httpError = (status, message) => {
   error.status = status;
   return error;
 };
+
+module.exports = httpError;
