@@ -1,16 +1,21 @@
+// imports
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const mongoose = require("mongoose");
-
 const authRoutes = require("./routes/auth.route");
-
+const messageRouter = require("./routes/message.route");
+// middlewares
 app.use(cors());
 app.use(express.json());
-
+app.use(cookieParser());
+// routes
 app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRouter);
 
+// middlewares
 app.use((_, res, __) => {
   res.status(404).json({
     messsage: "Not Found",
@@ -23,7 +28,7 @@ app.use((err, _, res, __) => {
     message,
   });
 });
-
+// db connection
 const PORT = process.env.PORT || 5001;
 const DB_HOST = process.env.DB_HOST;
 
