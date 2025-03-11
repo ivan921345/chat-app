@@ -7,7 +7,14 @@ import EmailInput from "../ui/EmailInput";
 import PasswordInput from "../ui/PasswordInput";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("login email")) || "";
+    } catch (error) {
+      console.log(error);
+      return "";
+    }
+  });
   const [password, setPassword] = useState("");
   const { isLogingIn, login } = useStore();
 
@@ -21,6 +28,12 @@ const LoginPage = () => {
     }
     if (e.target.name === "email") {
       setEmail(e.target.value);
+      localStorage.setItem(
+        `login ${e.target.name}`,
+        JSON.stringify(e.target.value)
+      );
+
+      console.log();
     }
   };
 

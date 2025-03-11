@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useStore from "../zustand/useStore";
-import { Eye, EyeClosed, MessageSquare } from "lucide-react";
-import { Link, useBeforeUnload } from "react-router-dom";
+import { MessageSquare } from "lucide-react";
+import { Link } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern";
 import UsernameInput from "../ui/UsernameInput";
 import PasswordInput from "../ui/PasswordInput";
@@ -9,8 +9,22 @@ import EmailInput from "../ui/EmailInput";
 
 const SignupPage = () => {
   const { signup, isSigningUp } = useStore();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("signup username")) || "";
+    } catch (error) {
+      console.log(error);
+      return "";
+    }
+  });
+  const [email, setEmail] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("signup email")) || "";
+    } catch (error) {
+      console.log(error);
+      return "";
+    }
+  });
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,15 +34,20 @@ const SignupPage = () => {
   const handleInpChange = (e) => {
     if (e.target.name === "password") {
       setPassword(e.target.value);
-      console.log(password);
     }
     if (e.target.name === "email") {
       setEmail(e.target.value);
-      console.log(email);
+      localStorage.setItem(
+        `signup ${e.target.name}`,
+        JSON.stringify(e.target.value)
+      );
     }
     if (e.target.name === "username") {
       setUsername(e.target.value);
-      console.log(username);
+      localStorage.setItem(
+        `signup ${e.target.name}`,
+        JSON.stringify(e.target.value)
+      );
     }
   };
   return (

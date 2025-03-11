@@ -27,12 +27,13 @@ const store = create((set) => ({
     try {
       set({ isSigningUp: true });
 
-      const res = authApi.signUp(data);
+      const res = await authApi.signUp(data);
+      console.log(res);
+      set({ authUser: res.data });
 
       notiflix.Notify.success("Account created successfully");
-
-      set({ authUser: res.data });
     } catch (error) {
+      notiflix.Notify.failure(error.response.data.message);
       console.log(error);
     } finally {
       set({ isSigningUp: false });
@@ -40,11 +41,12 @@ const store = create((set) => ({
   },
   logout: async () => {
     try {
-      const res = authApi.logout();
+      const res = await authApi.logout();
       set({ authUser: null });
       notiflix.Notify.success("Logged out successfully");
       return res;
     } catch (error) {
+      notiflix.Notify.failure(error.message);
       console.log(error);
     }
   },
@@ -54,13 +56,14 @@ const store = create((set) => ({
       set({ isLogingIn: true });
       const res = await authApi.login(body);
 
-      if (res) {
+      if (res.data) {
         notiflix.Notify.success("Logged in successfully");
       }
       set({ authUser: res.data });
 
       return res;
     } catch (error) {
+      notiflix.Notify.failure(error.response.data.message);
       console.log(error);
     } finally {
       set({ isLogingIn: false });

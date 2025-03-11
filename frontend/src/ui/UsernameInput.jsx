@@ -21,7 +21,7 @@ const usernameInput = ({ onChange, value }) => {
         type="text"
         required
         placeholder="Username"
-        pattern="[A-Za-z][A-Za-z0-9\-]*"
+        pattern="[A-Za-z][A-Za-z0-9\- ]*"
         minLength="3"
         maxLength="30"
         name="username"
