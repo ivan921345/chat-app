@@ -5,10 +5,17 @@ import SignupPage from "../../pages/Signup";
 import LoginPage from "../../pages/Login";
 import SettingsPage from "../../pages/Settings";
 import ProfilePage from "../../pages/Profile";
-// import {Loader} from 'lucide-react'
 
 import useStore from "../../zustand/useStore";
 import { useEffect } from "react";
+
+import notiflix from "notiflix";
+notiflix.Notify.init({
+  clickToClose: true,
+  width: "300px",
+  cssAnimation: "zoom",
+});
+
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useStore();
   useEffect(() => {

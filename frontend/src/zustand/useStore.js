@@ -54,8 +54,9 @@ const store = create((set) => ({
       set({ isLogingIn: true });
       const res = await authApi.login(body);
 
-      notiflix.Notify.success("Logged in successfully");
-
+      if (res) {
+        notiflix.Notify.success("Logged in successfully");
+      }
       set({ authUser: res.data });
 
       return res;

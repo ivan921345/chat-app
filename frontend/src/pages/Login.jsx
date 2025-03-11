@@ -3,16 +3,25 @@ import useStore from "../zustand/useStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Eye, EyeClosed, MessageSquare } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
+import EmailInput from "../ui/EmailInput";
+import PasswordInput from "../ui/PasswordInput";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { isLogingIn, login } = useStore();
-  const [isShowingPassword, setIsShowingPassword] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     login({ password, email });
+  };
+  const handleInpChange = (e) => {
+    if (e.target.name === "password") {
+      setPassword(e.target.value);
+    }
+    if (e.target.name === "email") {
+      setEmail(e.target.value);
+    }
   };
 
   return (
@@ -33,82 +42,11 @@ const LoginPage = () => {
             className="flex-col justify-center items-center space-y-6"
           >
             {/* Email input */}
-            <label className="input w-[100%]">
-              <svg
-                className="h-[1em] opacity-50"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
-                <g
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2.5"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                </g>
-              </svg>
-              <input
-                type="email"
-                placeholder="mail@site.com"
-                required
-                onChange={(e) => {
-                  setEmail(e.currentTarget.value);
-                }}
-                value={email}
-              />
-            </label>
+            <EmailInput onChange={handleInpChange} value={email} />
             {/* Pasword imput */}
-            <label className="input w-[100%] relative">
-              <svg
-                className="h-[1em] opacity-50"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
-                <g
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2.5"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                  <circle
-                    cx="16.5"
-                    cy="7.5"
-                    r=".5"
-                    fill="currentColor"
-                  ></circle>
-                </g>
-              </svg>
-              <input
-                type={isShowingPassword ? "text" : "password"}
-                required
-                placeholder="Password"
-                minLength="8"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                value={password}
-                title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => {
-                  setIsShowingPassword(() => !isShowingPassword);
-                }}
-              >
-                {isShowingPassword ? (
-                  <Eye className="size-5  text-base-content/40 hover: cursor-pointer " />
-                ) : (
-                  <EyeClosed className="size-5 text-base-content/40 hover: cursor-pointer" />
-                )}
-              </button>
-            </label>
+
+            <PasswordInput onChange={handleInpChange} value={password} />
+
             <button
               type="submit"
               className="btn btn-outline btn-success btn-block"
