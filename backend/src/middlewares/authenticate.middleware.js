@@ -7,17 +7,13 @@ const authenticate = async (req, res, next) => {
     const token = req.cookies.jwt;
 
     if (!token) {
-      throw httpError(401).json({
-        message: "Unauthorized - No Token Provided",
-      });
+      throw httpError(401, "Unauthorized - No Token Provided");
     }
 
     const { id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const user = await userServices.getUserById(id);
     if (!user) {
-      throw httpError(404).json({
-        message: "No user found",
-      });
+      throw httpError(404, "No user found");
     }
 
     req.user = user;
