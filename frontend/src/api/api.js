@@ -5,7 +5,7 @@ axios.defaults.withCredentials = true;
 const checkIfUserIsLoggedIn = async () => {
   try {
     const res = await axios.get("/auth/check");
-    return res;
+    return res.data;
   } catch (error) {
     console.log(error);
     return false;
@@ -24,10 +24,14 @@ const login = async (body) => {
   const res = await axios.post("/auth/login", body);
   return res.data;
 };
-
+const changeProfile = async (data) => {
+  const res = await axios.put("/auth/update-profile", data);
+  return res.data;
+};
 export default {
   checkIfUserIsLoggedIn,
   signUp,
   logout,
   login,
+  changeProfile,
 };

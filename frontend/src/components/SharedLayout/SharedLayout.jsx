@@ -1,6 +1,6 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 import useStore from "../../zustand/useStore";
-import { LogOut, MessageSquare, User } from "lucide-react";
+import { LogOut, MessageSquare, User, Settings } from "lucide-react";
 
 const SharedLayout = () => {
   const { authUser, logout } = useStore();
@@ -28,6 +28,10 @@ const SharedLayout = () => {
                 <Link to="/profile" className="btn btn-md gap-2">
                   <User className="size-5" />
                   <span className="hidden sm:inline">Profile</span>
+                </Link>
+                <Link to="/settings" className="btn btn-md gap-2">
+                  <Settings className="size-5" />
+                  <span className="hidden sm:inline">Settings</span>
                 </Link>
                 <button
                   onClick={logout}

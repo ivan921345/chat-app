@@ -7,78 +7,71 @@ const createJwt = require("../helpers/createJwt");
 const cloudinary = require("../services/cloudinary.service");
 
 const signup = async (req, res, next) => {
-  try {
-    const { email, password, fullName } = req.body;
+  const { email, password, fullName } = req.body;
 
-    const user = await User.findOne({ email });
-    if (user) {
-      throw httpError(409, "Unique email conflict");
-    }
-
-    const hashedPassword = await bcryptjs.hash(password, 10);
-
-    const newUser = await userServices.addUser({
-      ...req.body,
-      password: hashedPassword,
-    });
-
-    const token = createJwt({ id: newUser._id });
-
-    res.cookie("jwt", token, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV !== "development",
-    });
-
-    res.status(201).json({
-      message: "Created new user",
-      data: {
-        email,
-        fullName,
-        profilePic: newUser.profilePic,
-      },
-    });
-  } catch (error) {
-    next(error);
+  const user = await User.findOne({ email });
+  if (user) {
+    throw httpError(409, "Unique email conflict");
   }
+
+  const hashedPassword = await bcryptjs.hash(password, 10);
+
+  const newUser = await userServices.addUser({
+    ...req.body,
+    password: hashedPassword,
+  });
+
+  const token = createJwt({ id: newUser._id });
+
+  res.cookie("jwt", token, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV !== "development",
+  });
+
+  res.status(201).json({
+    message: "Created new user",
+    data: {
+      email,
+      fullName,
+      profilePic: newUser.profilePic,
+    },
+  });
 };
 
 const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const user = await userServices.getUserByEmail(email);
+  const user = await userServices.getUserByEmail(email);
 
-    if (!user) {
-      throw httpError(401, "Wrong email or password");
-    }
-
-    const isPasswordCorrect = await bcryptjs.compare(password, user.password);
-    console.log(isPasswordCorrect);
-    if (!isPasswordCorrect) {
-      throw httpError(401, "Wrong email or password");
-    }
-
-    const token = createJwt({ id: user._id });
-
-    res.cookie("jwt", token, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV !== "development",
-    });
-
-    res.status(200).json({
-      message: "Login success",
-      data: {
-        email: user.email,
-        fullName: user.fullName,
-      },
-    });
-  } catch (error) {
-    next(error);
+  if (!user) {
+    throw httpError(401, "Wrong email or password");
   }
+
+  const isPasswordCorrect = await bcryptjs.compare(password, user.password);
+  console.log(isPasswordCorrect);
+  if (!isPasswordCorrect) {
+    throw httpError(401, "Wrong email or password");
+  }
+
+  const token = createJwt({ id: user._id });
+
+  res.cookie("jwt", token, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV !== "development",
+  });
+
+  res.status(200).json({
+    message: "Login success",
+    data: {
+      email: user.email,
+      fullName: user.fullName,
+      profilePic: user.profilePic,
+    },
+  });
 };
 
 const logout = (_, res, next) => {
@@ -102,14 +95,21 @@ const updateProfile = async (req, res, next) => {
     profilePic: cloudinaryResp.secure_url,
   });
 
-  res.status(200).json(updatedUser);
+  res.status(200).json({
+    fullName: updatedUser.fullName,
+    email: updatedUser.email,
+    profilePic: updatedUser.profilePic,
+    createdAt: updatedUser.createdAt,
+  });
 };
 
 const checkAuth = (req, res, next) => {
+  const { createdAt } = req.user;
   res.status(200).json({
     fullName: req.user.fullName,
     profilePic: req.user.profilePic,
     email: req.user.email,
+    createdAt,
   });
 };
 

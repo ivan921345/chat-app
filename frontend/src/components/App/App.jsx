@@ -10,6 +10,7 @@ import useStore from "../../zustand/useStore";
 import { useEffect } from "react";
 
 import notiflix from "notiflix";
+import useThemeStore from "../../zustand/useThemeStore";
 notiflix.Notify.init({
   clickToClose: true,
   width: "300px",
@@ -18,11 +19,13 @@ notiflix.Notify.init({
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useStore();
+  const { theme } = useThemeStore();
   useEffect(() => {
-    checkAuth();
+    const asyncCheckAuth = async () => {
+      await checkAuth();
+    };
+    asyncCheckAuth();
   }, [checkAuth]);
-
-  console.log(authUser);
 
   if (isCheckingAuth && !authUser) {
     return (
@@ -34,7 +37,7 @@ const App = () => {
   console.log(authUser);
 
   return (
-    <div>
+    <div data-theme={theme}>
       <SharedLayout />
 
       <Routes>

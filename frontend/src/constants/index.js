@@ -1,0 +1,45 @@
+import { nanoid } from "nanoid";
+
+export const THEMES = [
+  "light",
+  "dark",
+  "cupcake",
+  "bumblebee",
+  "emerald",
+  "corporate",
+  "synthwave",
+  "retro",
+  "cyberpunk",
+  "valentine",
+  "halloween",
+  "garden",
+  "forest",
+  "aqua",
+  "lofi",
+  "pastel",
+  "fantasy",
+  "wireframe",
+  "black",
+  "luxury",
+  "dracula",
+  "cmyk",
+  "autumn",
+  "business",
+  "acid",
+  "lemonade",
+  "night",
+  "coffee",
+  "winter",
+  "dim",
+  "nord",
+  "sunset",
+];
+
+export const PREVIEW_MESSAGES = [
+  {
+    id: nanoid(),
+    content: "Hey, how is it going?",
+    isSent: false,
+  },
+  { id: nanoid(), content: "I'm great! Went out for a walk", isSent: true },
+];

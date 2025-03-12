@@ -16,7 +16,8 @@ const store = create((set) => ({
         set({ authUser: null });
         return;
       }
-      set({ authUser: res.data });
+      console.log(res);
+      set({ authUser: res });
     } catch (error) {
       console.log("Error in Check Auth", error);
     } finally {
@@ -67,6 +68,20 @@ const store = create((set) => ({
       console.log(error);
     } finally {
       set({ isLogingIn: false });
+    }
+  },
+
+  updateProfile: async (data) => {
+    try {
+      set({ isUpdatingProfile: true });
+      const res = await authApi.changeProfile(data);
+      notiflix.Notify.success("Successfully updated profile image");
+      console.log(res);
+    } catch (error) {
+      notiflix.Notify.failure(error.message);
+      console.log(error);
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));
