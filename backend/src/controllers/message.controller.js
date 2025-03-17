@@ -2,8 +2,8 @@ const crtlWrapper = require("../helpers/ctrlWrapper.helper");
 const httpError = require("../helpers/httpError.helper");
 const User = require("../models/user.model");
 const Message = require("../models/message.model");
-const { text } = require("express");
 const cloudinary = require("../services/cloudinary.service");
+const { getReceiverSocketId, io } = require("../socket/socket");
 
 const getUsersForSidebar = async (req, res) => {
   const loggedInUserId = req.user._id;
@@ -11,8 +11,13 @@ const getUsersForSidebar = async (req, res) => {
     _id: { $ne: loggedInUserId },
   }).select("-password");
 
+  if (filteredUsers) {
+    return res.status(200).json({
+      data: filteredUsers,
+    });
+  }
   res.status(200).json({
-    data: filteredUsers,
+    data: [],
   });
 };
 
@@ -34,7 +39,7 @@ const getMessages = async (req, res) => {
   }
 
   res.status(200).json({
-    messages,
+    data: messages,
   });
 };
 
@@ -49,18 +54,24 @@ const sendMessages = async (req, res) => {
     imgUrl = uploadRes.secure_url;
   }
 
-  const newMesssage = new Message({
+  const newMessage = new Message({
     senderId,
     recieverId,
     text,
-    imgUrl,
+    image: imgUrl,
   });
 
-  await newMesssage.save();
+  await newMessage.save();
 
-  // todo: realtime func
+  const receiverSocketId = getReceiverSocketId(recieverId);
 
-  res.status(201).json({ newMesssage });
+  if (!receiverSocketId) {
+    return;
+  }
+
+  io.to(receiverSocketId).emit("sendMessage", newMessage);
+
+  res.status(201).json(newMessage);
 };
 
 module.exports = {

@@ -18,13 +18,11 @@ notiflix.Notify.init({
 });
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth } = useStore();
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useStore();
   const { theme } = useThemeStore();
+  console.log(onlineUsers);
   useEffect(() => {
-    const asyncCheckAuth = async () => {
-      await checkAuth();
-    };
-    asyncCheckAuth();
+    checkAuth();
   }, [checkAuth]);
 
   if (isCheckingAuth && !authUser) {
@@ -34,7 +32,6 @@ const App = () => {
       </div>
     );
   }
-  console.log(authUser);
 
   return (
     <div data-theme={theme}>

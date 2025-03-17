@@ -6,5 +6,5 @@ const messageRouter = express.Router();
 
 messageRouter.get("/users", authenticate, messageCrtls.getUsersForSidebar);
 messageRouter.get("/:id", authenticate, messageCrtls.getMessages);
-messageRouter.post("/send/:id");
+messageRouter.post("/send/:id", authenticate, messageCrtls.sendMessages);
 module.exports = messageRouter;

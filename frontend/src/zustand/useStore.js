@@ -1,14 +1,18 @@
 import { create } from "zustand";
 import authApi from "../api";
 import notiflix from "notiflix";
+import { io } from "socket.io-client";
 
-const store = create((set) => ({
+const BASE_BACKEND_URL = "http://localhost:5001";
+
+const store = create((set, get) => ({
   authUser: null,
   isSigningUp: false,
   isLogingIn: false,
   isUpdatingProfile: false,
   isCheckingAuth: true,
-
+  onlineUsers: [],
+  socket: null,
   checkAuth: async () => {
     try {
       const res = await authApi.checkIfUserIsLoggedIn();
@@ -16,8 +20,8 @@ const store = create((set) => ({
         set({ authUser: null });
         return;
       }
-      console.log(res);
       set({ authUser: res });
+      get().connectSocket();
     } catch (error) {
       console.log("Error in Check Auth", error);
     } finally {
@@ -31,6 +35,7 @@ const store = create((set) => ({
       const res = await authApi.signUp(data);
       console.log(res);
       set({ authUser: res.data });
+      get().connectSocket();
 
       notiflix.Notify.success("Account created successfully");
     } catch (error) {
@@ -45,6 +50,8 @@ const store = create((set) => ({
       const res = await authApi.logout();
       set({ authUser: null });
       notiflix.Notify.success("Logged out successfully");
+      get().disconnectSocket();
+
       return res;
     } catch (error) {
       notiflix.Notify.failure(error.message);
@@ -53,6 +60,8 @@ const store = create((set) => ({
   },
 
   login: async (body) => {
+    get().connectSocket();
+
     try {
       set({ isLogingIn: true });
       const res = await authApi.login(body);
@@ -61,6 +70,7 @@ const store = create((set) => ({
         notiflix.Notify.success("Logged in successfully");
       }
       set({ authUser: res.data });
+      get().connectSocket();
 
       return res;
     } catch (error) {
@@ -82,6 +92,31 @@ const store = create((set) => ({
       console.log(error);
     } finally {
       set({ isUpdatingProfile: false });
+    }
+  },
+  connectSocket: () => {
+    const { authUser } = get();
+    if (!authUser) {
+      return;
+    }
+    console.log(authUser.id);
+    const socket = io(BASE_BACKEND_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+      query: {
+        userId: authUser.id,
+      },
+    });
+    socket.connect();
+    set({ socket });
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: [...userIds] });
+    });
+  },
+  disconnectSocket: () => {
+    if (get().socket?.connected) {
+      get().socket.disconnect();
+      set({ socket: null });
     }
   },
 }));

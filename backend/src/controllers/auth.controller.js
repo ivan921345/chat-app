@@ -36,6 +36,7 @@ const signup = async (req, res, next) => {
       email,
       fullName,
       profilePic: newUser.profilePic,
+      id: user._id,
     },
   });
 };
@@ -70,6 +71,8 @@ const login = async (req, res, next) => {
       email: user.email,
       fullName: user.fullName,
       profilePic: user.profilePic,
+      createdAt: user.createdAt,
+      id: user._id,
     },
   });
 };
@@ -100,6 +103,7 @@ const updateProfile = async (req, res, next) => {
     email: updatedUser.email,
     profilePic: updatedUser.profilePic,
     createdAt: updatedUser.createdAt,
+    id: userId,
   });
 };
 
@@ -110,6 +114,7 @@ const checkAuth = (req, res, next) => {
     profilePic: req.user.profilePic,
     email: req.user.email,
     createdAt,
+    id: req.user._id,
   });
 };
 

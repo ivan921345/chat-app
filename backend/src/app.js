@@ -1,12 +1,12 @@
 // imports
 const express = require("express");
 const cors = require("cors");
-const app = express();
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth.route");
 const messageRouter = require("./routes/message.route");
+const { app, server } = require("./socket/socket");
 // middlewares
 app.use(
   cors({
@@ -41,7 +41,7 @@ const conn = mongoose.connect(DB_HOST, { dbName: "chat_db" });
 
 conn
   .then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`App is listening port ${PORT}`);
     });
   })
