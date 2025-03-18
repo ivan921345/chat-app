@@ -3,7 +3,7 @@ name: Deploy Frontend to GitHub Pages
 on:
   push:
     branches:
-      - [main]
+      - main
 
 jobs:
   build-and-deploy:
@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repo 😎
         uses: actions/checkout@v3
 
-      - name: Install, lint, build 🔧
+      - name: Install, build 🔧
         run: |
           npm install --prefix frontend
           npm run build --prefix frontend
