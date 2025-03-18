@@ -18,10 +18,10 @@ jobs:
       - name: Install, build 🔧
         run: |
           npm install --prefix frontend
-          npm run build --prefix frontend -- --emptyOutDir
+          npm run buil;d --prefix frontend
 
       - name: Deploy to GitHub Pages ✔
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
           branch: gh-pages
-          folder: dist
+          folder: frontend/dist
