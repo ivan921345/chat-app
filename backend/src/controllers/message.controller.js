@@ -66,6 +66,7 @@ const sendMessages = async (req, res) => {
   const receiverSocketId = getReceiverSocketId(recieverId);
 
   if (!receiverSocketId) {
+    res.status(201).json(newMessage);
     return;
   }
 

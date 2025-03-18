@@ -36,7 +36,7 @@ const useChatStore = create((set, get) => ({
   sendMessage: async (data) => {
     try {
       set({ isSendingMessage: true });
-      const { selectedUser, messages } = await get();
+      const { selectedUser, messages } = get();
       const res = await api.sendMessage(selectedUser._id, data);
       console.log(res);
       set({ messages: [...messages, res] });

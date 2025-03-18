@@ -36,13 +36,6 @@ app.use((err, _, res, __) => {
   });
 });
 
-if (process.env.NODE_ENV === "prod") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-}
-
 // db connection
 const PORT = process.env.PORT || 5001;
 const DB_HOST = process.env.DB_HOST;

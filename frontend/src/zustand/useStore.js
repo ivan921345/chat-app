@@ -3,10 +3,7 @@ import authApi from "../api";
 import notiflix from "notiflix";
 import { io } from "socket.io-client";
 
-const BASE_BACKEND_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5001"
-    : "https://chat-app-hy33.onrender.com/";
+const BASE_BACKEND_URL = "http://localhost:5001";
 
 const store = create((set, get) => ({
   authUser: null,
@@ -119,7 +116,6 @@ const store = create((set, get) => ({
   disconnectSocket: () => {
     if (get().socket?.connected) {
       get().socket.disconnect();
-      set({ socket: null });
     }
   },
 }));
