@@ -20,6 +20,7 @@ const signup = async (req, res, next) => {
     ...req.body,
     password: hashedPassword,
   });
+  console.log(newUser);
 
   const token = createJwt({ id: newUser._id });
 
@@ -29,7 +30,7 @@ const signup = async (req, res, next) => {
       email,
       fullName,
       profilePic: newUser.profilePic,
-      id: user._id,
+      id: newUser._id,
       token,
     },
   });
