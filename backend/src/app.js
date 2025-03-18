@@ -12,7 +12,7 @@ const path = require("path");
 // middlewares
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://ivan921345.github.io/chat-app/"],
     credentials: true,
   })
 );

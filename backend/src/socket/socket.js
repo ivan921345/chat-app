@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["ws://localhost:5173"],
+    origin: ["ws://localhost:5173", "https://ivan921345.github.io/chat-app/"],
   },
 });
 
