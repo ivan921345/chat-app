@@ -1,5 +1,5 @@
 import axios from "axios";
-axios.defaults.baseURL = "http://localhost:5001/api";
+axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
 
 const token = localStorage.getItem("token") || "";
 axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;

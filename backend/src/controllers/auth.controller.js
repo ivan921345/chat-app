@@ -23,13 +23,6 @@ const signup = async (req, res, next) => {
 
   const token = createJwt({ id: newUser._id });
 
-  res.cookie("jwt", token, {
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV !== "development",
-  });
-
   res.status(201).json({
     message: "Created new user",
     data: {
@@ -58,13 +51,6 @@ const login = async (req, res, next) => {
   }
 
   const token = createJwt({ id: user._id });
-
-  res.cookie("jwt", token, {
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV !== "development",
-  });
 
   res.status(200).json({
     message: "Login success",

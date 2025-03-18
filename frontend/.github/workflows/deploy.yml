@@ -1,0 +1,22 @@
+name: Deploy Frontend to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo 😎
+        uses: actions/checkout@v3
+      - name: Install dependencies ❤
+        run: npm install --prefix frontend
+      - name: Build project 👀
+        run: npm run build --prefix frontend
+      - name: Deploy to GitHub Pages ✔
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: frontend/dist
