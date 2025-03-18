@@ -37,6 +37,7 @@ const signup = async (req, res, next) => {
       fullName,
       profilePic: newUser.profilePic,
       id: user._id,
+      token,
     },
   });
 };
@@ -73,6 +74,7 @@ const login = async (req, res, next) => {
       profilePic: user.profilePic,
       createdAt: user.createdAt,
       id: user._id,
+      token,
     },
   });
 };

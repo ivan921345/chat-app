@@ -35,6 +35,7 @@ const store = create((set, get) => ({
       const res = await authApi.signUp(data);
       console.log(res);
       set({ authUser: res.data });
+      localStorage.setItem("token", res.data.token || "");
       get().connectSocket();
 
       notiflix.Notify.success("Account created successfully");
@@ -50,6 +51,7 @@ const store = create((set, get) => ({
       const res = await authApi.logout();
       set({ authUser: null });
       notiflix.Notify.success("Logged out successfully");
+      localStorage.setItem("token", "");
       get().disconnectSocket();
 
       return res;
@@ -70,6 +72,7 @@ const store = create((set, get) => ({
         notiflix.Notify.success("Logged in successfully");
       }
       set({ authUser: res.data });
+      localStorage.setItem("token", res.data.token || "");
       get().connectSocket();
 
       return res;

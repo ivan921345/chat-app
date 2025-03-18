@@ -4,7 +4,13 @@ const userServices = require("../services/user.service");
 
 const authenticate = async (req, res, next) => {
   try {
-    const token = req.cookies.jwt;
+    // const token = req.cookies.jwt;
+
+    const [bearer, token] = req.headers.authorization.split(" ");
+
+    if (!bearer) {
+      throw httpError(401, "Unauthorized - No Token Provided");
+    }
 
     if (!token) {
       throw httpError(401, "Unauthorized - No Token Provided");
