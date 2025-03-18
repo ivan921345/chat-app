@@ -4,7 +4,9 @@ import notiflix from "notiflix";
 import { io } from "socket.io-client";
 
 const BASE_BACKEND_URL =
-  import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5001"
+    : "https://chat-app-hy33.onrender.com/";
 
 const store = create((set, get) => ({
   authUser: null,

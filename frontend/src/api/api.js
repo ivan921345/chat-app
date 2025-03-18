@@ -1,6 +1,8 @@
 import axios from "axios";
 axios.defaults.baseURL =
-  import.meta.env.MODE === "development" ? "http://localhost:5001/api" : "/api";
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5001/api"
+    : "https://chat-app-hy33.onrender.com/api";
 axios.defaults.withCredentials = true;
 
 const checkIfUserIsLoggedIn = async () => {
