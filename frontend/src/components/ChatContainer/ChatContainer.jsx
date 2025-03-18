@@ -39,7 +39,7 @@ const ChatContainer = () => {
 
   if (isMessagesLoading) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="flex w-[100%] justify-center items-center">
         <span className="loading loading-ring loading-xl"></span>
       </div>
     );
