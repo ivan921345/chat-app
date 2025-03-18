@@ -12,9 +12,6 @@ jobs:
       - name: Checkout repo 😎
         uses: actions/checkout@v3
 
-      - name: Set correct permissions
-        run: sudo chmod -R 777 ./frontend
-
       - name: Install, build 🔧
         run: |
           npm install --prefix frontend
@@ -24,4 +21,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
           branch: gh-pages
-          folder: /
+          folder: frontend/dist
