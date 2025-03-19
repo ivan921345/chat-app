@@ -71,8 +71,11 @@ const store = create((set, get) => ({
       if (res.data) {
         notiflix.Notify.success("Logged in successfully");
       }
-      set({ authUser: res.data });
       localStorage.setItem("token", res.data.token || "");
+      set({ authUser: res.data });
+      if (!res.data.token) {
+        notiflix.Notify.failure("No token retuned");
+      }
       get().connectSocket();
 
       return res;

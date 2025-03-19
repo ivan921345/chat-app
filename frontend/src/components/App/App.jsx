@@ -18,9 +18,8 @@ notiflix.Notify.init({
 });
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useStore();
+  const { authUser, checkAuth, isCheckingAuth } = useStore();
   const { theme } = useThemeStore();
-  console.log(onlineUsers);
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);

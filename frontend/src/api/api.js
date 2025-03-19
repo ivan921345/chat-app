@@ -1,13 +1,17 @@
 import axios from "axios";
 axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
 
-const token = localStorage.getItem("token") || "";
-axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-axios.defaults.withCredentials = true;
+// const token =  || "qweqwer";
+
+// axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
 const checkIfUserIsLoggedIn = async () => {
   try {
-    const res = await axios.get("/auth/check");
+    const res = await axios.get("/auth/check", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log(error);
@@ -16,33 +20,66 @@ const checkIfUserIsLoggedIn = async () => {
 };
 
 const signUp = async (body) => {
-  const res = await axios.post("/auth/signup", body);
+  const res = await axios.post("/auth/signup", body, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
   return res.data;
 };
 const logout = async () => {
-  const res = await axios.post("/auth/logout");
+  const res = await axios.post(
+    "/auth/logout",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
   return res.data;
 };
 const login = async (body) => {
-  const res = await axios.post("/auth/login", body);
+  const res = await axios.post("/auth/login", body, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
   return res.data;
 };
 const changeProfile = async (data) => {
-  const res = await axios.put("/auth/update-profile", data);
+  const res = await axios.put("/auth/update-profile", data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
   return res.data;
 };
 
 const fetchUsers = async () => {
-  const res = await axios.get("/messages/users");
+  const res = await axios.get("/messages/users", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
   return res.data;
 };
 
 const fetchMessages = async (id) => {
-  const res = await axios.get(`/messages/${id}`);
+  const res = await axios.get(`/messages/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
   return res.data;
 };
 const sendMessage = async (selectedUserId, data) => {
-  const res = await axios.post(`/messages/send/${selectedUserId}`, data);
+  const res = await axios.post(`/messages/send/${selectedUserId}`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
   return res.data;
 };
 
