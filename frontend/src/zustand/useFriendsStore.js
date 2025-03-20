@@ -10,7 +10,7 @@ const useFriendsStore = create((set) => ({
     try {
       set({ isFetchingFiendsLoading: true });
       const res = await api.fetchFriends();
-      console.log(res);
+
       set({ friends: res });
     } catch (error) {
       Notify.failure(error.message);

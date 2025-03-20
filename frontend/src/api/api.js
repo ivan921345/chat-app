@@ -90,7 +90,7 @@ const fetchFriends = async () => {
 };
 
 const deleteFriend = async (friendId) => {
-  const res = await axios.post("/friends/delete", friendId, {
+  const res = await axios.delete("/friends/delete", friendId, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },

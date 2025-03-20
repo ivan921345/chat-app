@@ -65,14 +65,21 @@ const Friends = () => {
                 alt="avatar"
                 className="size-30"
               />
-              <div className="flex flex-col items-end justify-end ">
-                <h2 className="text-base-200">{friend.fullName}</h2>
-                <button className="btn">Reveal friends id</button>
+              <div className="flex flex-col items-start justify-end ">
+                <h2 className="px-4 py-4">Username: {friend.fullName}</h2>
+                <button className="btn btn-outline btn-primary rounded-xl  mt-4">
+                  Reveal friends id
+                </button>
                 <button
-                  className="btn"
+                  className="btn btn-outline btn-error rounded-xl flex w-[100%] justify-center items-center mt-4"
+                  disabled={isDeletingFriend}
                   onClick={() => deleteFriend(friend._id)}
                 >
-                  Delete Friend
+                  {isDeletingFriend ? (
+                    <span className="loading loading-spinner loading-xs"></span>
+                  ) : (
+                    "Delete Friend"
+                  )}
                 </button>
               </div>
             </div>
