@@ -8,6 +8,7 @@ const authRoutes = require("./routes/auth.route");
 const messageRouter = require("./routes/message.route");
 const { app, server } = require("./socket/socket");
 const path = require("path");
+const friendsRouter = require("./routes/friends.route");
 
 // middlewares
 app.use(
@@ -25,6 +26,7 @@ app.use(cookieParser());
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRouter);
+app.use("/api/friends", friendsRouter);
 
 // middlewares
 app.use((_, res, __) => {

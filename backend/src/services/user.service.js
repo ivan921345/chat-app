@@ -24,6 +24,33 @@ const addUser = async (body) => {
   return await User.create(body);
 };
 
+const getAllFriends = async (userId) => {
+  const { friends } = await User.findById(userId);
+  return friends;
+};
+
+const addFriend = async (userId, friendId) => {
+  const { friends: prevFriendsIds } = await User.findById(userId);
+  return await User.findByIdAndUpdate(
+    userId,
+    {
+      friends: [...prevFriendsIds, friendId],
+    },
+    { new: true }
+  ).select("-password");
+};
+const deleteFriend = async (userId, friendId) => {
+  const { friends: allFriends } = await User.findById(userId);
+  const filteredFriends = allFriends.filter((friend) => friend !== friendId);
+  return await User.findByIdAndUpdate(
+    userId,
+    {
+      friends: [...filteredFriends],
+    },
+    { new: true }
+  ).select("-password");
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -32,4 +59,7 @@ module.exports = {
   deleteUser,
   changeUser,
   addUser,
+  addFriend,
+  deleteFriend,
+  getAllFriends,
 };

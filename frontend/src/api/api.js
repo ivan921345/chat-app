@@ -1,10 +1,6 @@
 import axios from "axios";
 axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
 
-// const token =  || "qweqwer";
-
-// axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
 const checkIfUserIsLoggedIn = async () => {
   try {
     const res = await axios.get("/auth/check", {
@@ -83,6 +79,16 @@ const sendMessage = async (selectedUserId, data) => {
   return res.data;
 };
 
+const fetchFriends = async () => {
+  const res = await axios.get("/friends", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  return res.data;
+};
+
 export default {
   checkIfUserIsLoggedIn,
   signUp,
@@ -92,4 +98,5 @@ export default {
   fetchUsers,
   fetchMessages,
   sendMessage,
+  fetchFriends,
 };

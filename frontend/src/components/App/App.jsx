@@ -5,7 +5,7 @@ import SignupPage from "../../pages/Signup";
 import LoginPage from "../../pages/Login";
 import SettingsPage from "../../pages/Settings";
 import ProfilePage from "../../pages/Profile";
-
+import FriendsPage from "../../pages/Friends";
 import useStore from "../../zustand/useStore";
 import { useEffect } from "react";
 
@@ -56,6 +56,10 @@ const App = () => {
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/friends"
+          element={authUser ? <FriendsPage /> : <Navigate to="/login" />}
         />
       </Routes>
     </div>

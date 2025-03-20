@@ -20,7 +20,12 @@ const user = new Schema(
       type: String,
       default: "",
     },
+    friends: {
+      type: [String],
+      default: [],
+    },
   },
+
   {
     timestamps: true,
     versionKey: false,
