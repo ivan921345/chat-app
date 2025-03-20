@@ -90,7 +90,8 @@ const fetchFriends = async () => {
 };
 
 const deleteFriend = async (friendId) => {
-  const res = await axios.delete("/friends/delete", friendId, {
+  const res = await axios.delete("/friends/delete", {
+    data: { friendId },
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -98,6 +99,7 @@ const deleteFriend = async (friendId) => {
 
   return res.data;
 };
+
 export default {
   checkIfUserIsLoggedIn,
   signUp,

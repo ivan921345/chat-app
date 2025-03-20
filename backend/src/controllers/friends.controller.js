@@ -14,7 +14,7 @@ const addFriend = async (req, res) => {
     return res.status(200).json(user);
   }
   const updatedUser = await userServices.addFriend(user._id, friendId);
-  res.status(200).json(updatedUser);
+  res.status(201).json(updatedUser);
 };
 
 const deleteFriend = async (req, res) => {
