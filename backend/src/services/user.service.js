@@ -26,7 +26,12 @@ const addUser = async (body) => {
 
 const getAllFriends = async (userId) => {
   const { friends } = await User.findById(userId);
-  return friends;
+
+  const friendsPromiseArr = friends.map((friend) => {
+    return User.findById(friend).select("-password");
+  });
+
+  return Promise.all(friendsPromiseArr);
 };
 
 const addFriend = async (userId, friendId) => {

@@ -10,6 +10,9 @@ const getFriends = async (req, res) => {
 const addFriend = async (req, res) => {
   const user = req.user;
   const { friendId } = req.body;
+  if (user.friends.includes(friendId)) {
+    return res.status(200).json(user);
+  }
   const updatedUser = await userServices.addFriend(user._id, friendId);
   res.status(200).json(updatedUser);
 };
