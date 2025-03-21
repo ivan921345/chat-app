@@ -3,21 +3,22 @@ import useChatStore from "../../zustand/useChatStore";
 import SidebarSkeleton from "../../skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 import useStore from "../../zustand/useStore";
-
+import useFriendsStore from "../../zustand/useFriendsStore";
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
-    useChatStore();
+  const { selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
+
+  const { friends, fetchFriends } = useFriendsStore();
 
   const { onlineUsers } = useStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+    fetchFriends();
+  }, [fetchFriends]);
 
   const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+    ? friends.filter((friend) => onlineUsers.includes(friend._id))
+    : friends;
 
   if (isUsersLoading) {
     return <SidebarSkeleton />;

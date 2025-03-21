@@ -64,8 +64,8 @@ const useChatStore = create((set, get) => ({
     const socket = useStore.getState().socket;
     socket.off("sendMessage");
   },
-  setSelectedUser: (selectedUser) => {
-    set({ selectedUser });
+  setSelectedUser: (selectedUserValue) => {
+    set({ selectedUser: selectedUserValue });
   },
 }));
 

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import api from "../api";
 import { Notify } from "notiflix";
+import useChatStore from "../zustand/useChatStore";
 
 const useFriendsStore = create((set) => ({
   friends: [],
@@ -22,8 +23,13 @@ const useFriendsStore = create((set) => ({
     try {
       set({ isDeletingFriend: true });
       const res = await api.deleteFriend(friendId);
-      console.log(res);
       set({ friends: res });
+      const { selectedUser, setSelectedUser } = useChatStore.getState();
+      console.log(selectedUser);
+      if (selectedUser?.id === friendId) {
+        setSelectedUser(null);
+      }
+      console.log(selectedUser);
     } catch (error) {
       Notify.failure(error.message);
     } finally {

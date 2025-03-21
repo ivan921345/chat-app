@@ -1,8 +1,10 @@
 const ctrlWrapper = require("../helpers/ctrlWrapper.helper");
 const userServices = require("../services/user.service");
+const httpError = require("../helpers/httpError.helper");
 
 const getFriends = async (req, res) => {
   const user = req.user;
+  p;
   const allFriends = await userServices.getAllFriends(user._id);
   res.status(200).json(allFriends);
 };
@@ -11,10 +13,8 @@ const addFriend = async (req, res) => {
   const user = req.user;
   const { friendId } = req.body;
 
-  if (user._id === friendId) {
-    return res.status(400).json({
-      message: "You can not use your own ID",
-    });
+  if (user._id.toString() === friendId.toString()) {
+    throw httpError(400, "You can not use your own ID");
   }
   const arrayOfFriends = await userServices.addFriend(user._id, friendId);
   res.status(201).json(arrayOfFriends);
