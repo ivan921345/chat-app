@@ -101,11 +101,15 @@ const deleteFriend = async (friendId) => {
 };
 
 const addFriend = async (friendId) => {
-  const res = await axios.post("/friends/add", friendId, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  const res = await axios.post(
+    "/friends/add",
+    { friendId },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
   return res.data;
 };
 

@@ -13,6 +13,11 @@ const addFriend = async (req, res) => {
   if (user.friends.includes(friendId)) {
     return res.status(200).json(user);
   }
+  if (user._id === friendId) {
+    reutrn res.status(400).json({
+      message: "You can not ue your ID",
+    });
+  }
   const updatedUser = await userServices.addFriend(user._id, friendId);
   res.status(201).json(updatedUser);
 };
