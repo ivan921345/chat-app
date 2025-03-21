@@ -42,6 +42,11 @@ const addFriend = async (userId, friendId) => {
   if (!friendToAdd) {
     throw httpError(404, `No user with id of ${friendId} has been found`);
   }
+  if (!friendToAdd.friends.includes(userId)) {
+    await User.findByIdAndUpdate(friendId, {
+      friends: [...friendToAdd.friends, userId],
+    });
+  }
 
   return await User.findByIdAndUpdate(
     userId,
@@ -52,15 +57,15 @@ const addFriend = async (userId, friendId) => {
   ).select("-password");
 };
 const deleteFriend = async (userId, friendId) => {
-  const { friends: allFriends } = await User.findById(userId);
-  const filteredFriends = allFriends.filter((friend) => friend !== friendId);
-  return await User.findByIdAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     userId,
-    {
-      friends: [...filteredFriends],
-    },
-    { new: true }
+    { $pull: { friends: friendId } },
+    { new: true, returnDocument: "after" }
   ).select("-password");
+
+  await User.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
+
+  return updatedUser;
 };
 
 module.exports = {
