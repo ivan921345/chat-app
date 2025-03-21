@@ -4,7 +4,6 @@ const httpError = require("../helpers/httpError.helper");
 
 const getFriends = async (req, res) => {
   const user = req.user;
-  p;
   const allFriends = await userServices.getAllFriends(user._id);
   res.status(200).json(allFriends);
 };
