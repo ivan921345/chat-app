@@ -1,6 +1,6 @@
 const httpError = require("../helpers/httpError.helper");
 const User = require("../models/user.model");
-
+const mapFriendsArray = require("../helpers/mapArrayOfFriends");
 const getAllUsers = async () => {
   return await User.find({});
 };
@@ -28,11 +28,7 @@ const addUser = async (body) => {
 const getAllFriends = async (userId) => {
   const { friends } = await User.findById(userId);
 
-  const friendsPromiseArr = friends.map((friend) => {
-    return User.findById(friend).select("-password");
-  });
-
-  return Promise.all(friendsPromiseArr);
+  return await mapFriendsArray(friends);
 };
 
 const addFriend = async (userId, friendId) => {
@@ -42,19 +38,24 @@ const addFriend = async (userId, friendId) => {
   if (!friendToAdd) {
     throw httpError(404, `No user with id of ${friendId} has been found`);
   }
+  if (prevFriendsIds.includes(friendToAdd._id)) {
+    return await mapFriendsArray(prevFriendsIds);
+  }
   if (!friendToAdd.friends.includes(userId)) {
     await User.findByIdAndUpdate(friendId, {
       friends: [...friendToAdd.friends, userId],
     });
   }
 
-  return await User.findByIdAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     userId,
     {
       friends: [...prevFriendsIds, friendId],
     },
     { new: true }
   ).select("-password");
+
+  return await mapFriendsArray(updatedUser.friends);
 };
 const deleteFriend = async (userId, friendId) => {
   const updatedUser = await User.findByIdAndUpdate(
@@ -65,7 +66,7 @@ const deleteFriend = async (userId, friendId) => {
 
   await User.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
 
-  return updatedUser;
+  return await mapFriendsArray(updatedUser.friends);
 };
 
 module.exports = {

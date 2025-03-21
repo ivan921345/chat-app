@@ -25,8 +25,8 @@ const Friends = () => {
   const hadleAddFriendFormSubmit = (e) => {
     e.preventDefault();
     addFriend(friendsIdInput);
+    fetchFriends();
   };
-
   if (isFetchingFiendsLoading) {
     return (
       <div className="flex w-[100%] justify-center items-center">
@@ -34,6 +34,8 @@ const Friends = () => {
       </div>
     );
   }
+
+  console.log(friends);
 
   return (
     <div className="flex-1 h-screen flex flex-col items-center justify-center overflow-auto">

@@ -11,7 +11,6 @@ const useFriendsStore = create((set) => ({
     try {
       set({ isFetchingFiendsLoading: true });
       const res = await api.fetchFriends();
-
       set({ friends: res });
     } catch (error) {
       Notify.failure(error.message);
@@ -24,7 +23,7 @@ const useFriendsStore = create((set) => ({
       set({ isDeletingFriend: true });
       const res = await api.deleteFriend(friendId);
       console.log(res);
-      set({ friends: res.friends });
+      set({ friends: res });
     } catch (error) {
       Notify.failure(error.message);
     } finally {
@@ -35,7 +34,8 @@ const useFriendsStore = create((set) => ({
     try {
       set({ isAddingFriend: true });
       const res = await api.addFriend(friendId);
-      set({ friends: res.friends });
+      console.log(res);
+      set({ friends: res });
     } catch (error) {
       console.log(error);
       Notify.failure(error.message);

@@ -10,23 +10,21 @@ const getFriends = async (req, res) => {
 const addFriend = async (req, res) => {
   const user = req.user;
   const { friendId } = req.body;
-  if (user.friends.includes(friendId)) {
-    return res.status(200).json(user);
-  }
+
   if (user._id === friendId) {
     return res.status(400).json({
-      message: "You can not your your ID",
+      message: "You can not use your own ID",
     });
   }
-  const updatedUser = await userServices.addFriend(user._id, friendId);
-  res.status(201).json(updatedUser);
+  const arrayOfFriends = await userServices.addFriend(user._id, friendId);
+  res.status(201).json(arrayOfFriends);
 };
 
 const deleteFriend = async (req, res) => {
   const user = req.user;
   const { friendId } = req.body;
-  const updatedUser = await userServices.deleteFriend(user._id, friendId);
-  res.status(200).json(updatedUser);
+  const arrayOfFriends = await userServices.deleteFriend(user._id, friendId);
+  res.status(200).json(arrayOfFriends);
 };
 
 module.exports = {
