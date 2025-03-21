@@ -1,11 +1,15 @@
-import { X } from "lucide-react";
 import useStore from "../../zustand/useStore";
 import useChatStore from "../../zustand/useChatStore";
 import { CircleX } from "lucide-react";
+import NoSelectedChat from "../NoSelectedChat";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useStore();
+
+  if (!selectedUser) {
+    return <NoSelectedChat />;
+  }
 
   return (
     <div className="p-2.5 border-b border-base-300">
