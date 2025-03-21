@@ -100,6 +100,15 @@ const deleteFriend = async (friendId) => {
   return res.data;
 };
 
+const addFriend = async (friendId) => {
+  const res = await axios.post("/friends/add", friendId, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  return res.data;
+};
+
 export default {
   checkIfUserIsLoggedIn,
   signUp,
@@ -111,4 +120,5 @@ export default {
   sendMessage,
   fetchFriends,
   deleteFriend,
+  addFriend,
 };

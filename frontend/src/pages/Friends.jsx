@@ -10,6 +10,8 @@ const Friends = () => {
     isFetchingFiendsLoading,
     isDeletingFriend,
     deleteFriend,
+    addFriend,
+    isAddingFriend,
   } = useFriendsStore();
   const [friendsIdInput, setFriendsIdInput] = useState("");
   useEffect(() => {
@@ -18,6 +20,11 @@ const Friends = () => {
 
   const handleFriendsIdInputChange = (e) => {
     setFriendsIdInput(e.target.value);
+  };
+
+  const hadleAddFriendFormSubmit = (e) => {
+    e.preventDefault();
+    addFriend(friendsIdInput);
   };
 
   if (isFetchingFiendsLoading) {
@@ -43,10 +50,25 @@ const Friends = () => {
             <h1 className="mb-10 text-4xl p-4 font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
               You have no friends yet...
             </h1>
-            <FriendsIdInput
-              value={friendsIdInput}
-              onChange={handleFriendsIdInputChange}
-            />
+            <form
+              onSubmit={hadleAddFriendFormSubmit}
+              className="w-[100%] flex flex-col mb-4 justify-center items-center"
+            >
+              <FriendsIdInput
+                value={friendsIdInput}
+                onChange={handleFriendsIdInputChange}
+              />
+              <button
+                type="submit"
+                className="btn w-[100%] btn-outline btn-success rounded-xl"
+              >
+                {isAddingFriend ? (
+                  <span className="loading loading-ring loading-sm"></span>
+                ) : (
+                  "Add friend"
+                )}
+              </button>
+            </form>
             <div className="flex w-100 flex-col gap-4">
               <div className="skeleton h-32 w-full"></div>
               <div className="skeleton h-4 w-28"></div>

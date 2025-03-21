@@ -36,6 +36,14 @@ const getAllFriends = async (userId) => {
 
 const addFriend = async (userId, friendId) => {
   const { friends: prevFriendsIds } = await User.findById(userId);
+  const friendToAdd = await User.findById(friendId);
+
+  if (!friendToAdd) {
+    return res.status(404).json({
+      message: `Friend with id: ${friendId} was not found`,
+    });
+  }
+
   return await User.findByIdAndUpdate(
     userId,
     {

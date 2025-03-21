@@ -6,6 +6,7 @@ const useFriendsStore = create((set) => ({
   friends: [],
   isFetchingFiendsLoading: false,
   isDeletingFriend: false,
+  isAddingFriend: false,
   fetchFriends: async () => {
     try {
       set({ isFetchingFiendsLoading: true });
@@ -27,6 +28,17 @@ const useFriendsStore = create((set) => ({
       Notify.failure(error.message);
     } finally {
       set({ isDeletingFriend: false });
+    }
+  },
+  addFriend: async (friendId) => {
+    try {
+      set({ isAddingFriend: true });
+      const res = await api.addFriend(friendId);
+      console.log(res);
+    } catch (error) {
+      Notify.failure(error.message);
+    } finally {
+      set({ isAddingFriend: false });
     }
   },
 }));
