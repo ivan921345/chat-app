@@ -14,7 +14,7 @@ const addFriend = async (req, res) => {
     return res.status(200).json(user);
   }
   if (user._id === friendId) {
-    reutrn res.status(400).json({
+    return res.status(400).json({
       message: "You can not ue your ID",
     });
   }

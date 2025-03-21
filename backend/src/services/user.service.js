@@ -1,3 +1,4 @@
+const httpError = require("../helpers/httpError.helper");
 const User = require("../models/user.model");
 
 const getAllUsers = async () => {
@@ -39,9 +40,7 @@ const addFriend = async (userId, friendId) => {
   const friendToAdd = await User.findById(friendId);
 
   if (!friendToAdd) {
-    return res.status(404).json({
-      message: `Friend with id: ${friendId} was not found`,
-    });
+    throw httpError(404, `No user with id of ${friendId} has been found`);
   }
 
   return await User.findByIdAndUpdate(
