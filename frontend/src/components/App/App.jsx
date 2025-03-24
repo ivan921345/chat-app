@@ -6,6 +6,7 @@ import LoginPage from "../../pages/Login";
 import SettingsPage from "../../pages/Settings";
 import ProfilePage from "../../pages/Profile";
 import FriendsPage from "../../pages/Friends";
+import SearchFriendsPage from "../../pages/SearchFriends";
 import useStore from "../../zustand/useStore";
 import { useEffect } from "react";
 
@@ -57,10 +58,18 @@ const App = () => {
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
-        <Route
-          path="/friends"
-          element={authUser ? <FriendsPage /> : <Navigate to="/login" />}
-        />
+        <Route path="/friends">
+          <Route
+            index
+            element={authUser ? <FriendsPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="search"
+            element={
+              authUser ? <SearchFriendsPage /> : <Navigate to="/login" />
+            }
+          />
+        </Route>
       </Routes>
     </div>
   );

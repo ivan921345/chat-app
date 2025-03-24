@@ -1,9 +1,11 @@
 import { useState } from "react";
 import useStore from "../zustand/useStore";
 import { Camera, User, Mail } from "lucide-react";
+import useFriendsStore from "../zustand/useFriendsStore";
 const ProfilePage = () => {
   const { isUpdatingProfile, authUser, updateProfile } = useStore();
   const [selectedImage, setSelectedImage] = useState(null);
+  const { friends } = useFriendsStore();
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) {
@@ -89,9 +91,13 @@ const ProfilePage = () => {
                 <span>Member since</span>
                 <span>{authUser.createdAt?.split("T")[0]}</span>
               </div>
-              <div className="flex items-center justify-between py-2 ">
+              <div className="flex items-center justify-between py-4 border-b border-zinc-700">
                 <span>Account Status</span>
                 <span className="text-green-500">Active</span>
+              </div>
+              <div className="flex items-center justify-between py-2 ">
+                <span>Has friends</span>
+                <span>{friends.length}</span>
               </div>
             </div>
           </div>

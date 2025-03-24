@@ -109,7 +109,9 @@ const ChatContainer = () => {
                   alt="image"
                 />
               )}
-              {message.text && <p>{message.text}</p>}
+              {message.text && (
+                <p className="text-[0.9rem] sm:text-lg">{message.text}</p>
+              )}
             </div>
             {activeMessageId === message._id && (
               <ul

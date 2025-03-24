@@ -1,6 +1,14 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 import useStore from "../../zustand/useStore";
-import { LogOut, MessageSquare, User, Settings, Users } from "lucide-react";
+import {
+  LogOut,
+  MessageSquare,
+  User,
+  Settings,
+  Users,
+  Search,
+  Handshake,
+} from "lucide-react";
 
 const SharedLayout = () => {
   const { authUser, logout } = useStore();
@@ -33,10 +41,30 @@ const SharedLayout = () => {
                   <Settings className="size-5" />
                   <span className="hidden sm:inline">Settings</span>
                 </Link>
-                <Link to="/friends" className="btn btn-md gap-2">
-                  <Users className="size-5" />
-                  <span className="hidden sm:inline">Friends</span>
-                </Link>
+                <div className="dropdown dropdown-end">
+                  <div tabIndex={0} role="button" className="btn m-1 flex">
+                    <Handshake />
+                    <span className="hidden sm:inline">Сommunity</span>
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+                  >
+                    <li>
+                      <Link to="/friends" className="btn btn-md gap-2">
+                        <Users className="size-5" />
+                        <span className="">Friends</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/friends/search" className="btn btn-md gap-2">
+                        <Search className="size-5" />
+                        <span className="">Search friends</span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+
                 <button
                   onClick={logout}
                   className="flex gap-2 btn btn-md items-center"

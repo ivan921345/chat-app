@@ -2,6 +2,10 @@ import useFriendsStore from "../zustand/useFriendsStore";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import FriendsIdInput from "../ui/FriendsIdInput";
+import { Notify } from "notiflix";
+import NoFriends from "../components/NoFriends";
+
+import { Copy, CheckCheck } from "lucide-react";
 
 const Friends = () => {
   const {
@@ -14,9 +18,27 @@ const Friends = () => {
     isAddingFriend,
   } = useFriendsStore();
   const [friendsIdInput, setFriendsIdInput] = useState("");
+  const [isRevealingFriendsId, setIsRevealingFriendsId] = useState(false);
+  const [isIdCopied, setIsIdCopied] = useState(false);
+
   useEffect(() => {
     fetchFriends();
   }, [fetchFriends]);
+
+  const handleCopyId = async (userId) => {
+    try {
+      await navigator.clipboard.writeText(userId);
+      setIsIdCopied(true);
+      Notify.success("Friends id was copyed to your clipboard");
+
+      setTimeout(() => {
+        setIsIdCopied(false);
+      }, 2000);
+    } catch (error) {
+      Notify.failure("Error while copying id");
+      console.log(error);
+    }
+  };
 
   const handleFindFriendsInputChange = (e) => {
     setFriendsIdInput(e.target.value);
@@ -48,36 +70,12 @@ const Friends = () => {
         }`}
       >
         {friends.length === 0 ? (
-          <div className="h-full flex justify-center flex-col items-center">
-            <h1 className="mb-10 text-4xl p-4 font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-              You have no friends yet...
-            </h1>
-            <form
-              onSubmit={hadleAddFriendFormSubmit}
-              className="w-[100%] flex flex-col mb-4 justify-center items-center"
-            >
-              <FriendsIdInput
-                value={friendsIdInput}
-                onChange={handleFindFriendsInputChange}
-              />
-              <button
-                type="submit"
-                className="btn w-[100%] btn-outline btn-success rounded-xl"
-              >
-                {isAddingFriend ? (
-                  <span className="loading loading-ring loading-sm"></span>
-                ) : (
-                  "Add friend"
-                )}
-              </button>
-            </form>
-            <div className="flex w-100 flex-col gap-4">
-              <div className="skeleton h-32 w-full"></div>
-              <div className="skeleton h-4 w-28"></div>
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
-            </div>
-          </div>
+          <NoFriends
+            hadleAddFriendFormSubmit={hadleAddFriendFormSubmit}
+            friendsIdInput={friendsIdInput}
+            isAddingFriend={isAddingFriend}
+            handleFindFriendsInputChange={handleFindFriendsInputChange}
+          />
         ) : (
           friends.map((friend) => (
             <div
@@ -89,11 +87,37 @@ const Friends = () => {
                 alt="avatar"
                 className="size-30"
               />
-              <div className="flex flex-col items-start justify-end ">
+              <div className="flex flex-col items-start justify-end w-[60%]">
                 <h2 className="px-4 py-4">Username: {friend.fullName}</h2>
-                <button className="btn btn-outline btn-primary rounded-xl  mt-4">
-                  Reveal friends id
-                </button>
+                {!isRevealingFriendsId ? (
+                  <button
+                    onClick={() =>
+                      setIsRevealingFriendsId(() => !isRevealingFriendsId)
+                    }
+                    className="btn btn-outline btn-primary w-[100%] rounded-xl mt-4"
+                  >
+                    Reveal friends id
+                  </button>
+                ) : (
+                  <div className="flex w-[100%] justify-between items-center">
+                    <label className="input flex ">
+                      <input
+                        type="input"
+                        className="w-[100%] flex 7"
+                        readOnly={true}
+                        value={friend._id}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      className={`btn ${isIdCopied && "bg-green-500"} `}
+                      onClick={() => handleCopyId(friend._id)}
+                    >
+                      {isIdCopied ? <CheckCheck /> : <Copy />}
+                    </button>
+                  </div>
+                )}
+
                 <button
                   className="btn btn-outline btn-error rounded-xl flex w-[100%] justify-center items-center mt-4"
                   disabled={isDeletingFriend}
