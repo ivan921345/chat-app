@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useChatStore from "../../zustand/useChatStore";
 import ChatHeader from "../ChatHeader";
 import MessageInput from "../MessageInput";
@@ -13,9 +13,34 @@ const ChatContainer = () => {
     unsubscribeFromMessages,
   } = useChatStore();
 
+  const [activeMessageId, setActiveMessageId] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+
   const messageEndRef = useRef(null);
 
   const { authUser } = useStore();
+
+  const handleContextMenu = (event, messageId) => {
+    event.preventDefault();
+    setMenuPosition({ x: event.pageX, y: event.pageY });
+    console.log(menuPosition.y);
+    setActiveMessageId(messageId);
+    setIsContextMenuOpen(true);
+  };
+
+  const handleClickOutside = () => {
+    setIsContextMenuOpen(false);
+    setActiveMessageId(null);
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isContextMenuOpen]);
 
   useEffect(() => {
     getMessages(selectedUser._id);
@@ -51,9 +76,10 @@ const ChatContainer = () => {
       <div className="flex-1 overflow-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
+            onContextMenu={(event) => handleContextMenu(event, message._id)}
             key={message._id}
             ref={messageEndRef}
-            className={`chat ${
+            className={`chat relative ${
               message.senderId === selectedUser._id ? "chat-start" : "chat-end"
             }`}
           >
@@ -85,6 +111,21 @@ const ChatContainer = () => {
               )}
               {message.text && <p>{message.text}</p>}
             </div>
+            {activeMessageId === message._id && (
+              <ul
+                className={`absolute top-${menuPosition.y} left-${menuPosition.x}`}
+              >
+                <button type="button" className="btn btn-rounded">
+                  Copy
+                </button>
+                <button type="button" className="btn btn-rounded">
+                  Delete
+                </button>
+                <button type="button" className="btn btn-rounded">
+                  Change
+                </button>
+              </ul>
+            )}
           </div>
         ))}
       </div>
