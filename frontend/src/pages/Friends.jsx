@@ -18,7 +18,7 @@ const Friends = () => {
     fetchFriends();
   }, [fetchFriends]);
 
-  const handleFriendsIdInputChange = (e) => {
+  const handleFindFriendsInputChange = (e) => {
     setFriendsIdInput(e.target.value);
   };
 
@@ -58,7 +58,7 @@ const Friends = () => {
             >
               <FriendsIdInput
                 value={friendsIdInput}
-                onChange={handleFriendsIdInputChange}
+                onChange={handleFindFriendsInputChange}
               />
               <button
                 type="submit"

@@ -8,7 +8,7 @@ const FriendsidInput = ({ onChange, value }) => {
         <input
           type="text"
           required
-          placeholder="Type the friends id..."
+          placeholder="Type the friends id, name or email..."
           minLength="3"
           maxLength="30"
           onChange={onChange}
@@ -16,6 +16,7 @@ const FriendsidInput = ({ onChange, value }) => {
           value={value}
         />
       </label>
+
       <ShieldAlert />
     </div>
   );
