@@ -7,21 +7,33 @@ const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInput = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const { sendMessage, isSendingMessage } = useChatStore();
 
   const handleimageSelect = (e) => {
     const file = e.target.files[0];
     console.log(file);
+    // if (!file.type.startsWith("image")) {
+    //   Notiflix.Notify.failure("Please select an image");
+    //   return;
+    // }
+    // const reader = new FileReader();
+
+    // reader.onloadend = () => {
+    //   setImagePreview(reader.result);
+    // };
+    // reader.readAsDataURL(file);
+
+    if (!file) return;
     if (!file.type.startsWith("image")) {
       Notiflix.Notify.failure("Please select an image");
       return;
     }
-    const reader = new FileReader();
 
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
     reader.readAsDataURL(file);
+    setSelectedImage(file);
   };
 
   const removeImage = () => {
@@ -33,19 +45,20 @@ const MessageInput = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-
+    const formData = new FormData();
     if (!text.trim() && !imagePreview) {
       return;
     }
-
+    formData.append("text", text);
+    if (selectedImage) {
+      formData.append("image", selectedImage);
+    }
     try {
-      await sendMessage({
-        text: text.trim(),
-        image: imagePreview,
-      });
+      await sendMessage(formData);
 
       setText("");
       setImagePreview(null);
+      setSelectedImage(null);
       if (fileInput.current) {
         fileInput.current.value = null;
       }

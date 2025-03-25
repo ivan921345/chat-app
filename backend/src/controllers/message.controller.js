@@ -43,17 +43,7 @@ const getMessages = async (req, res) => {
   });
 };
 
-const sendMessages = async (req, res) => {
-  const { text, image } = req.body;
-  const recieverId = req.params.id;
-  const senderId = req.user._id;
-
-  let imgUrl;
-  if (image) {
-    const uploadRes = await cloudinary.uploader.upload(image);
-    imgUrl = uploadRes.secure_url;
-  }
-
+const saveMessage = async (senderId, recieverId, text, imgUrl, res) => {
   const newMessage = new Message({
     senderId,
     recieverId,
@@ -62,7 +52,6 @@ const sendMessages = async (req, res) => {
   });
 
   await newMessage.save();
-
   const receiverSocketId = getReceiverSocketId(recieverId);
 
   if (!receiverSocketId) {
@@ -73,6 +62,28 @@ const sendMessages = async (req, res) => {
   io.to(receiverSocketId).emit("sendMessage", newMessage);
 
   res.status(201).json(newMessage);
+
+  res.status(201).json(newMessage);
+};
+
+const sendMessages = async (req, res) => {
+  const { text } = req.body;
+  const recieverId = req.params.id;
+  const senderId = req.user._id;
+
+  let imgUrl;
+  if (req.file) {
+    const uploadRes = await cloudinary.uploader
+      .upload_stream({ resource_type: "image" }, (error, result) => {
+        if (error) return res.status(500).json({ error });
+        imgUrl = result.secure_url;
+
+        saveMessage(senderId, recieverId, text, imgUrl, res);
+      })
+      .end(req.file.buffer);
+  } else {
+    saveMessage(senderId, recieverId, text, imgUrl, res);
+  }
 };
 
 module.exports = {
