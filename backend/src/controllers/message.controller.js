@@ -1,5 +1,4 @@
 const crtlWrapper = require("../helpers/ctrlWrapper.helper");
-const httpError = require("../helpers/httpError.helper");
 const User = require("../models/user.model");
 const Message = require("../models/message.model");
 const cloudinary = require("../services/cloudinary.service");
@@ -62,8 +61,6 @@ const saveMessage = async (senderId, recieverId, text, imgUrl, res) => {
   io.to(receiverSocketId).emit("sendMessage", newMessage);
 
   res.status(201).json(newMessage);
-
-  res.status(201).json(newMessage);
 };
 
 const sendMessages = async (req, res) => {
@@ -73,7 +70,7 @@ const sendMessages = async (req, res) => {
 
   let imgUrl;
   if (req.file) {
-    const uploadRes = await cloudinary.uploader
+    const uploadRes = cloudinary.uploader
       .upload_stream({ resource_type: "image" }, (error, result) => {
         if (error) return res.status(500).json({ error });
         imgUrl = result.secure_url;
@@ -86,8 +83,28 @@ const sendMessages = async (req, res) => {
   }
 };
 
+const deleteMessage = async (req, res) => {
+  const messageToDeleteId = req.params.id;
+  const messageToDelete = await Message.findById(messageToDeleteId);
+  const receiverSocketId = getReceiverSocketId(messageToDelete.recieverId);
+  console.log(receiverSocketId);
+  if (!messageToDelete) {
+    return res.status(404).json({
+      message: "Message not found",
+    });
+  }
+  const deletedMessage = await Message.findByIdAndDelete(messageToDeleteId, {
+    new: true,
+  });
+
+  io.to(receiverSocketId).emit("deleteMessage", deletedMessage);
+
+  res.status(200).json(deletedMessage);
+};
+
 module.exports = {
   getUsersForSidebar: crtlWrapper(getUsersForSidebar),
   getMessages: crtlWrapper(getMessages),
   sendMessages: crtlWrapper(sendMessages),
+  deleteMessage: crtlWrapper(deleteMessage),
 };

@@ -13,16 +13,6 @@ const MessageInput = () => {
   const handleimageSelect = (e) => {
     const file = e.target.files[0];
     console.log(file);
-    // if (!file.type.startsWith("image")) {
-    //   Notiflix.Notify.failure("Please select an image");
-    //   return;
-    // }
-    // const reader = new FileReader();
-
-    // reader.onloadend = () => {
-    //   setImagePreview(reader.result);
-    // };
-    // reader.readAsDataURL(file);
 
     if (!file) return;
     if (!file.type.startsWith("image")) {

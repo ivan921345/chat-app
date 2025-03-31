@@ -38,12 +38,24 @@ const useChatStore = create((set, get) => ({
       set({ isSendingMessage: true });
       const { selectedUser, messages } = get();
       const res = await api.sendMessage(selectedUser._id, data);
-      console.log(res);
       set({ messages: [...messages, res] });
     } catch (error) {
       Notify.failure(error.message);
     } finally {
       set({ isSendingMessage: false });
+    }
+  },
+  deleteMessage: async (messageId) => {
+    try {
+      const deletedMessage = await api.deleteMessage(messageId);
+      console.log(deletedMessage);
+      const filteredMessages = get().messages.filter((message) => {
+        return message._id !== deletedMessage._id;
+      });
+
+      set({ messages: filteredMessages });
+    } catch (error) {
+      Notify.failure(error.response.data.message);
     }
   },
   subscribeToMessages: () => {
@@ -57,6 +69,13 @@ const useChatStore = create((set, get) => ({
         return;
       }
       set({ messages: [...get().messages, newMessage] });
+    });
+    socket.on("deleteMessage", (deletedMessage) => {
+      console.log(deletedMessage);
+      const filteredMessages = get().messages.filter((message) => {
+        return message._id !== deletedMessage._id;
+      });
+      set({ messages: [...filteredMessages] });
     });
   },
 

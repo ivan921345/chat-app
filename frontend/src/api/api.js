@@ -1,5 +1,6 @@
 import axios from "axios";
-axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
+const DEV_BACKEND_URL = "http://localhost:5001/";
+axios.defaults.baseURL = "https://chat-app-six-psi-67.vercel.app/api";
 
 const checkIfUserIsLoggedIn = async () => {
   try {
@@ -78,6 +79,14 @@ const sendMessage = async (selectedUserId, data) => {
   });
   return res.data;
 };
+const deleteMessage = async (messageId) => {
+  const res = await axios.delete(`/messages/delete/${messageId}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  return res.data;
+};
 
 const fetchFriends = async () => {
   const res = await axios.get("/friends", {
@@ -125,4 +134,5 @@ export default {
   fetchFriends,
   deleteFriend,
   addFriend,
+  deleteMessage,
 };

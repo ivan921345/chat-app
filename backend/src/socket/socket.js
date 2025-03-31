@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "ws://localhost:5173",
+      "http://localhost:5173",
       "https://ivan921345.github.io/chat-app/",
       "https://chat-app-six-psi-67.vercel.app",
     ],
@@ -19,26 +19,23 @@ const io = new Server(server, {
 const userSocketMap = {};
 
 const getReceiverSocketId = (userId) => {
+  console.log(userSocketMap);
+
   return userSocketMap[userId];
 };
 
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
-
   if (userId) {
     if (userSocketMap[userId]) {
       delete userSocketMap[userId];
     }
     userSocketMap[userId] = socket.id;
   }
-
-  console.log(userSocketMap);
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
-  console.log(userSocketMap);
   socket.on("disconnect", () => {
     delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    console.log(userSocketMap);
   });
 });
 

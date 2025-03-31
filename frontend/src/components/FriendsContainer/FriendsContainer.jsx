@@ -21,7 +21,7 @@ const FriendsContainer = ({ friends }) => {
       await navigator.clipboard.writeText(userId);
       setIsIdCopied(true);
       setCopiedId(userId);
-      Notify.success("Friends id was copyed to your clipboard");
+      Notify.success("Friends id was copied to your clipboard");
 
       setTimeout(() => {
         setIsIdCopied(false);

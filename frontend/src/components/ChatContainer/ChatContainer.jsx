@@ -3,9 +3,11 @@ import useChatStore from "../../zustand/useChatStore";
 import ChatHeader from "../ChatHeader";
 import MessageInput from "../MessageInput";
 import useStore from "../../zustand/useStore";
+import { Notify } from "notiflix";
 const ChatContainer = () => {
   const {
     messages,
+    deleteMessage,
     getMessages,
     isMessagesLoading,
     selectedUser,
@@ -16,23 +18,12 @@ const ChatContainer = () => {
   const [activeMessageId, setActiveMessageId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const [isContextMenuImageSelected, setIsContextMenuImageSelected] =
+    useState(false);
 
   const messageEndRef = useRef(null);
 
   const { authUser } = useStore();
-
-  const handleContextMenu = (event, messageId) => {
-    event.preventDefault();
-    setMenuPosition({ x: event.pageX, y: event.pageY });
-    console.log(menuPosition.y);
-    setActiveMessageId(messageId);
-    setIsContextMenuOpen(true);
-  };
-
-  const handleClickOutside = () => {
-    setIsContextMenuOpen(false);
-    setActiveMessageId(null);
-  };
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
@@ -55,6 +46,36 @@ const ChatContainer = () => {
     subscribeToMessages,
     unsubscribeFromMessages,
   ]);
+
+  const handleContextMenu = (event, messageId) => {
+    event.preventDefault();
+    if (event.target.nodeName === "IMG") {
+      setIsContextMenuImageSelected(true);
+      setMenuPosition({ x: event.pageX, y: event.pageY });
+      setActiveMessageId(messageId);
+      setIsContextMenuOpen(true);
+      return;
+    }
+    setIsContextMenuImageSelected(false);
+    setMenuPosition({ x: event.pageX, y: event.pageY });
+    setActiveMessageId(messageId);
+    setIsContextMenuOpen(true);
+  };
+
+  const handleClickOutside = () => {
+    setIsContextMenuOpen(false);
+    setActiveMessageId(null);
+  };
+
+  const handleCopyMessage = async (message) => {
+    try {
+      await navigator.clipboard.writeText(message);
+      Notify.success("Message copied to your clipboard");
+    } catch (error) {
+      Notify.failure("Error while copying message");
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (messageEndRef.current && messages) {
@@ -117,15 +138,46 @@ const ChatContainer = () => {
               <ul
                 className={`absolute top-${menuPosition.y} left-${menuPosition.x}`}
               >
-                <button type="button" className="btn btn-rounded">
-                  Copy
-                </button>
-                <button type="button" className="btn btn-rounded">
-                  Delete
-                </button>
-                <button type="button" className="btn btn-rounded">
-                  Change
-                </button>
+                {isContextMenuImageSelected ? (
+                  <>
+                    <button
+                      onClick={() => handleCopyMessage(message.text)}
+                      type="button"
+                      className="btn btn-rounded"
+                    >
+                      Copy
+                    </button>
+                    <button type="button" className="btn btn-rounded">
+                      Delete
+                    </button>
+                    <button type="button" className="btn btn-rounded">
+                      Change
+                    </button>
+                    <button type="button" className="btn btn-rounded">
+                      Download
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleCopyMessage(message.text)}
+                      type="button"
+                      className="btn btn-rounded"
+                    >
+                      Copy
+                    </button>
+                    <button
+                      onClick={() => deleteMessage(message._id)}
+                      type="button"
+                      className="btn btn-rounded"
+                    >
+                      Delete
+                    </button>
+                    <button type="button" className="btn btn-rounded">
+                      Change
+                    </button>
+                  </>
+                )}
               </ul>
             )}
           </div>

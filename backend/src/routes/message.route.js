@@ -19,4 +19,5 @@ messageRouter.post(
   upload.single("image"),
   messageCrtls.sendMessages
 );
+messageRouter.delete("/delete/:id", authenticate, messageCrtls.deleteMessage);
 module.exports = messageRouter;
