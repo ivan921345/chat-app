@@ -3,7 +3,7 @@ import api from "../api";
 import { Notify } from "notiflix";
 import useChatStore from "../zustand/useChatStore";
 
-const useFriendsStore = create((set) => ({
+const useFriendsStore = create((set, get) => ({
   friends: [],
   isFetchingFiendsLoading: false,
   isDeletingFriend: false,
@@ -54,6 +54,7 @@ const useFriendsStore = create((set) => ({
       set({ isSearchingFriends: true });
       const res = await api.searchFriend(userCredentials);
       set({ foundFriends: res });
+      console.log(get().foundFriends);
     } catch (error) {
       Notify.failure(error?.response?.body?.message ?? "uncougth error");
     } finally {

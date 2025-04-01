@@ -122,8 +122,16 @@ const addFriend = async (friendId) => {
   return res.data;
 };
 
-searchFriend = async (userCredentials) => {
-  const res = await axios.post(`/friends/search/${userCredentials}`);
+const searchFriend = async (userCredentials) => {
+  const res = await axios.post(
+    `/friends/search/${userCredentials}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
   return res.data;
 };
 
