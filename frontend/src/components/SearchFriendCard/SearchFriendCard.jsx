@@ -1,8 +1,10 @@
 import useFriendsStore from "../../zustand/useFriendsStore";
-import { UserRoundPlus } from "lucide-react";
+import { UserRoundPlus, UserRoundMinus } from "lucide-react";
+import useStore from "../../zustand/useStore";
 
 const SearchFriendCard = ({ email, profilePic, friendId }) => {
-  const { addFriend } = useFriendsStore();
+  const { addFriend, deleteFriend } = useFriendsStore();
+  const { authUser } = useStore();
 
   return (
     <li className="list-row">
@@ -13,12 +15,21 @@ const SearchFriendCard = ({ email, profilePic, friendId }) => {
         <div>{email}</div>
         <div className="text-xs font-semibold opacity-60">{friendId}</div>
       </div>
-      <button
-        className="btn btn-square btn-ghost"
-        onClick={() => addFriend(friendId)}
-      >
-        <UserRoundPlus />
-      </button>
+      {authUser?.friends?.includes(friendId) ? (
+        <button
+          className="btn btn-square btn-ghost"
+          onClick={() => deleteFriend(friendId)}
+        >
+          <UserRoundMinus />
+        </button>
+      ) : (
+        <button
+          className="btn btn-square btn-ghost"
+          onClick={() => addFriend(friendId)}
+        >
+          <UserRoundPlus />
+        </button>
+      )}
     </li>
   );
 };

@@ -104,6 +104,7 @@ const checkAuth = (req, res, next) => {
     email: req.user.email,
     createdAt,
     id: req.user._id,
+    friends: req.user.friends,
   });
 };
 
