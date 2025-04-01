@@ -1,6 +1,6 @@
 import axios from "axios";
 const DEV_BACKEND_URL = "http://localhost:5001/";
-axios.defaults.baseURL = "https://chat-app-six-psi-67.vercel.app/api";
+axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
 
 const checkIfUserIsLoggedIn = async () => {
   try {

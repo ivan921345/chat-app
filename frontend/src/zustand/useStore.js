@@ -3,7 +3,7 @@ import authApi from "../api";
 import notiflix from "notiflix";
 import { io } from "socket.io-client";
 
-const BASE_BACKEND_URL = "https://chat-app-six-psi-67.vercel.app/";
+const BASE_BACKEND_URL = "https://chat-app-16po.onrender.com/";
 const DEV_BACKEND_URL = "http://localhost:5001/";
 
 const store = create((set, get) => ({
