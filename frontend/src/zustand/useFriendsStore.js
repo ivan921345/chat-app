@@ -8,6 +8,8 @@ const useFriendsStore = create((set) => ({
   isFetchingFiendsLoading: false,
   isDeletingFriend: false,
   isAddingFriend: false,
+  isSearchingFriends: false,
+  foundFriends: [],
   fetchFriends: async () => {
     try {
       set({ isFetchingFiendsLoading: true });
@@ -45,6 +47,17 @@ const useFriendsStore = create((set) => ({
       Notify.failure(error.response.data.message);
     } finally {
       set({ isAddingFriend: false });
+    }
+  },
+  searchFriend: async (userCredentials) => {
+    try {
+      set({ isSearchingFriends: true });
+      const res = await api.searchFriend(userCredentials);
+      set({ foundFriends: res });
+    } catch (error) {
+      Notify.failure(error?.response?.body?.message ?? "uncougth error");
+    } finally {
+      set({ isSearchingFriends: false });
     }
   },
 }));

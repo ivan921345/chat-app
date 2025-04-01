@@ -19,6 +19,13 @@ const addFriend = async (req, res) => {
   res.status(201).json(arrayOfFriends);
 };
 
+const searchFriend = async (req, res) => {
+  const userCredentials = req.params.creadentials;
+  const users = await userServices.searchFriend(userCredentials);
+
+  res.status(200).json(users);
+};
+
 const deleteFriend = async (req, res) => {
   const user = req.user;
   const { friendId } = req.body;
@@ -30,4 +37,5 @@ module.exports = {
   getFriends: ctrlWrapper(getFriends),
   addFriend: ctrlWrapper(addFriend),
   deleteFriend: ctrlWrapper(deleteFriend),
+  searchFriend: ctrlWrapper(searchFriend),
 };

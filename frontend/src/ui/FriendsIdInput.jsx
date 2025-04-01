@@ -17,7 +17,7 @@ const FriendsidInput = ({ onChange, value }) => {
         />
       </label>
 
-      <ShieldAlert />
+      <ShieldAlert size={28} />
     </div>
   );
 };

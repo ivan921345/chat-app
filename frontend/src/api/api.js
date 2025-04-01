@@ -122,6 +122,11 @@ const addFriend = async (friendId) => {
   return res.data;
 };
 
+searchFriend = async (userCredentials) => {
+  const res = await axios.post(`/friends/search/${userCredentials}`);
+  return res.data;
+};
+
 export default {
   checkIfUserIsLoggedIn,
   signUp,
@@ -135,4 +140,5 @@ export default {
   deleteFriend,
   addFriend,
   deleteMessage,
+  searchFriend,
 };

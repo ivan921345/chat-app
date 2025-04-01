@@ -1,6 +1,7 @@
 const httpError = require("../helpers/httpError.helper");
 const User = require("../models/user.model");
 const mapFriendsArray = require("../helpers/mapArrayOfFriends");
+const mongoose = require("mongoose");
 const getAllUsers = async () => {
   return await User.find({});
 };
@@ -69,6 +70,19 @@ const deleteFriend = async (userId, friendId) => {
   return await mapFriendsArray(updatedUser.friends);
 };
 
+const searchFriend = async (credentials) => {
+  const query = {
+    $or: [{ email: credentials }, { fullName: credentials }],
+  };
+
+  if (mongoose.Types.ObjectId.isValid(credentials)) {
+    query.$or.push({ _id: new mongoose.Types.ObjectId(credentials) });
+  }
+
+  const user = await User.find(query);
+  return user;
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -80,4 +94,5 @@ module.exports = {
   addFriend,
   deleteFriend,
   getAllFriends,
+  searchFriend,
 };
