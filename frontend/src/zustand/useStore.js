@@ -4,7 +4,6 @@ import notiflix from "notiflix";
 import { io } from "socket.io-client";
 const DEV_BACKEND_URL = "http://localhost:5001/";
 const BASE_BACKEND_URL = "https://chat-app-16po.onrender.com/";
-
 const store = create((set, get) => ({
   authUser: null,
   isSigningUp: false,
@@ -92,7 +91,7 @@ const store = create((set, get) => ({
       set({ isUpdatingProfile: true });
       const res = await authApi.changeProfile(data);
       notiflix.Notify.success("Successfully updated profile image");
-      console.log(res);
+      set({ authUser: res });
     } catch (error) {
       notiflix.Notify.failure(error.message);
       console.log(error);

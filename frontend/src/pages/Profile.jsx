@@ -2,22 +2,31 @@ import { useState } from "react";
 import useStore from "../zustand/useStore";
 import { Camera, User, Mail } from "lucide-react";
 import useFriendsStore from "../zustand/useFriendsStore";
+import Notiflix from "notiflix";
 const ProfilePage = () => {
   const { isUpdatingProfile, authUser, updateProfile } = useStore();
   const [selectedImage, setSelectedImage] = useState(null);
   const { friends } = useFriendsStore();
+
   const handleImageUpload = async (e) => {
+    const formData = new FormData();
     const file = e.target.files[0];
-    if (!file) {
+    console.log(file);
+
+    if (!file.type.startsWith("image")) {
+      Notiflix.Notify.failure("Please select an image");
       return;
     }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = async () => {
-      const base64Image = reader.result;
-      setSelectedImage(base64Image);
-      await updateProfile({ profilePic: base64Image });
-    };
+    setSelectedImage(file);
+
+    console.log(selectedImage);
+    try {
+      formData.append("avatar", file);
+      await updateProfile(formData);
+      setSelectedImage(null);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="h-screen pt-20">

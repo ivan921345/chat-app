@@ -3,6 +3,7 @@ const User = require("../models/user.model");
 const Message = require("../models/message.model");
 const cloudinary = require("../services/cloudinary.service");
 const { getReceiverSocketId, io } = require("../socket/socket");
+const streamUpload = require("../helpers/uploadStream.helper");
 
 const getUsersForSidebar = async (req, res) => {
   const loggedInUserId = req.user._id;
@@ -68,18 +69,11 @@ const sendMessages = async (req, res) => {
   const recieverId = req.params.id;
   const senderId = req.user._id;
 
-  let imgUrl;
   if (req.file) {
-    const uploadRes = cloudinary.uploader
-      .upload_stream({ resource_type: "image" }, (error, result) => {
-        if (error) return res.status(500).json({ error });
-        imgUrl = result.secure_url;
-
-        saveMessage(senderId, recieverId, text, imgUrl, res);
-      })
-      .end(req.file.buffer);
+    const { secure_url } = await streamUpload(req.file.buffer);
+    saveMessage(senderId, recieverId, text, secure_url, res);
   } else {
-    saveMessage(senderId, recieverId, text, imgUrl, res);
+    saveMessage(senderId, recieverId, text, "", res);
   }
 };
 

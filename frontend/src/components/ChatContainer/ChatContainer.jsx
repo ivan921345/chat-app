@@ -147,7 +147,11 @@ const ChatContainer = () => {
                     >
                       Copy
                     </button>
-                    <button type="button" className="btn btn-rounded">
+                    <button
+                      onClick={() => deleteMessage(message._id)}
+                      type="button"
+                      className="btn btn-rounded"
+                    >
                       Delete
                     </button>
                     <button type="button" className="btn btn-rounded">

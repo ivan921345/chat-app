@@ -4,7 +4,7 @@ const httpError = require("../helpers/httpError.helper");
 const bcryptjs = require("bcryptjs");
 const userServices = require("../services/user.service");
 const createJwt = require("../helpers/createJwt");
-const cloudinary = require("../services/cloudinary.service");
+const streamUpload = require("../helpers/uploadStream.helper");
 
 const signup = async (req, res, next) => {
   const { email, password, fullName } = req.body;
@@ -76,24 +76,34 @@ const logout = (_, res, next) => {
 };
 
 const updateProfile = async (req, res, next) => {
-  const { profilePic } = req.body;
   const userId = req.user._id;
 
-  if (!profilePic) {
-    throw httpError(400, "Bad Request");
+  if (!req.file) {
+    return res.status(400).json({
+      message: "No file selected",
+    });
   }
-  const cloudinaryResp = await cloudinary.uploader.upload(profilePic);
-  const updatedUser = await userServices.changeUser(userId, {
-    profilePic: cloudinaryResp.secure_url,
-  });
 
-  res.status(200).json({
-    fullName: updatedUser.fullName,
-    email: updatedUser.email,
-    profilePic: updatedUser.profilePic,
-    createdAt: updatedUser.createdAt,
-    id: userId,
-  });
+  try {
+    const result = await streamUpload(req.file.buffer);
+
+    if (!result.secure_url) {
+      return res.status(500).json({
+        message: "internal server error",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: result?.secure_url },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error in updateProfile:", error);
+    res.status(500).json({ message: "Failed to update profile image" });
+  }
 };
 
 const checkAuth = (req, res, next) => {
