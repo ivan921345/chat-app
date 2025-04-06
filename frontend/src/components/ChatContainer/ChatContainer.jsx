@@ -133,6 +133,9 @@ const ChatContainer = () => {
               {message.text && (
                 <p className="text-[0.9rem] sm:text-lg">{message.text}</p>
               )}
+              {message.voiceMessage && (
+                <audio src={message.voiceMessage} controls={true}></audio>
+              )}
             </div>
             {activeMessageId === message._id && (
               <ul

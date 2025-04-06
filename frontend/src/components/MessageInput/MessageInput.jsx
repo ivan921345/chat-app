@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import useChatStore from "../../zustand/useChatStore";
-import { X, Image, Send } from "lucide-react";
+import { X, Image, Send, AudioLines, ChurchIcon } from "lucide-react";
 import Notiflix from "notiflix";
 
 const MessageInput = () => {
@@ -9,6 +9,9 @@ const MessageInput = () => {
   const fileInput = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const { sendMessage, isSendingMessage } = useChatStore();
+  const [isRecordingVoiceMessage, setIsRecordingVoiceMessage] = useState(false);
+  const chunksRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
 
   const handleimageSelect = (e) => {
     const file = e.target.files[0];
@@ -57,6 +60,34 @@ const MessageInput = () => {
     }
   };
 
+  const handleVoiceMessageButtonHold = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mediaRecorder = new MediaRecorder(stream);
+    const formData = new FormData();
+
+    chunksRef.current = [];
+
+    mediaRecorder.ondataavailable = (e) => chunksRef.current.push(e.data);
+
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+      if (blob.size !== 0) {
+        formData.append("voice", blob);
+        await sendMessage(formData);
+      }
+    };
+
+    mediaRecorder.start();
+    mediaRecorderRef.current = mediaRecorder;
+
+    setIsRecordingVoiceMessage(true);
+  };
+
+  const handleVoiceMessageButtonUp = () => {
+    setIsRecordingVoiceMessage(false);
+    mediaRecorderRef.current?.stop();
+  };
+
   return (
     <div className="p-4 w-full">
       {imagePreview && (
@@ -100,7 +131,7 @@ const MessageInput = () => {
             onChange={handleimageSelect}
           />
           <button
-            className={`hidden sm:flex btn btn-circle ${
+            className={`flex btn btn-circle ${
               imagePreview ? "text-emerald-400" : "text-zinc-500"
             }`}
             onClick={() => {
@@ -109,6 +140,17 @@ const MessageInput = () => {
             type="button"
           >
             <Image size={20} />
+          </button>
+          <button
+            onMouseDown={handleVoiceMessageButtonHold}
+            onMouseUp={handleVoiceMessageButtonUp}
+            className={`${
+              isRecordingVoiceMessage
+                ? "text-emerald-500 animate-pulse"
+                : "text-zinc-500"
+            }  hover:cursor-pointer transition-all`}
+          >
+            <AudioLines />
           </button>
         </div>
 

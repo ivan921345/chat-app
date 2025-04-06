@@ -18,6 +18,9 @@ const message = new Schema(
     image: {
       type: String,
     },
+    voiceMessage: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -15,7 +15,10 @@ messageRouter.get("/:id", authenticate, messageCrtls.getMessages);
 messageRouter.post(
   "/send/:id",
   authenticate,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "voice", maxCount: 1 },
+  ]),
   messageCrtls.sendMessages
 );
 messageRouter.delete("/delete/:id", authenticate, messageCrtls.deleteMessage);

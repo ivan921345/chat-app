@@ -43,12 +43,20 @@ const getMessages = async (req, res) => {
   });
 };
 
-const saveMessage = async (senderId, recieverId, text, imgUrl, res) => {
+const saveMessage = async (
+  senderId,
+  recieverId,
+  text,
+  imgUrl,
+  voiceMessageUrl,
+  res
+) => {
   const newMessage = new Message({
     senderId,
     recieverId,
     text,
     image: imgUrl,
+    voiceMessage: voiceMessageUrl,
   });
 
   await newMessage.save();
@@ -69,11 +77,25 @@ const sendMessages = async (req, res) => {
   const recieverId = req.params.id;
   const senderId = req.user._id;
 
-  if (req.file) {
-    const { secure_url } = await streamUpload(req.file.buffer);
-    saveMessage(senderId, recieverId, text, secure_url, res);
+  console.log("files ", req.files);
+
+  if (req.files.voice) {
+    const { secure_url } = await streamUpload(
+      req.files.voice[0].buffer,
+      "video"
+    );
+    await saveMessage(senderId, recieverId, "", "", secure_url, res);
+    return;
+  }
+
+  if (req.files.image) {
+    const { secure_url } = await streamUpload(
+      req.files.image[0].buffer,
+      "image"
+    );
+    saveMessage(senderId, recieverId, text, secure_url, "", res);
   } else {
-    saveMessage(senderId, recieverId, text, "", res);
+    saveMessage(senderId, recieverId, text, "", "", res);
   }
 };
 
