@@ -20,7 +20,8 @@ const ChatContainer = () => {
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
   const [isContextMenuImageSelected, setIsContextMenuImageSelected] =
     useState(false);
-
+  const audioTagRef = useRef(null);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const messageEndRef = useRef(null);
 
   const { authUser } = useStore();
@@ -46,6 +47,11 @@ const ChatContainer = () => {
     subscribeToMessages,
     unsubscribeFromMessages,
   ]);
+  useEffect(() => {
+    if (messageEndRef.current && messages) {
+      messageEndRef.current.scrollIntoView();
+    }
+  }, [messages]);
 
   const handleContextMenu = (event, messageId) => {
     event.preventDefault();
@@ -77,11 +83,16 @@ const ChatContainer = () => {
     }
   };
 
-  useEffect(() => {
-    if (messageEndRef.current && messages) {
-      messageEndRef.current.scrollIntoView();
+  const handlePlayPauseAudio = () => {
+    const audio = audioTagRef.current;
+    if (audio.paused) {
+      audio.play();
+      setIsPlayingAudio(true);
+    } else {
+      audio.pause();
+      setIsPlayingAudio(false);
     }
-  }, [messages]);
+  };
 
   if (isMessagesLoading) {
     return (
@@ -134,7 +145,16 @@ const ChatContainer = () => {
                 <p className="text-[0.9rem] sm:text-lg">{message.text}</p>
               )}
               {message.voiceMessage && (
-                <audio src={message.voiceMessage} controls={true}></audio>
+                <div className="w-[20%]">
+                  <button onClick={handlePlayPauseAudio}>
+                    {isPlayingAudio ? "Play" : "Pause"}
+                  </button>
+                  <audio
+                    ref={audioTagRef}
+                    className="hidden"
+                    src={message.voiceMessage}
+                  ></audio>
+                </div>
               )}
             </div>
             {activeMessageId === message._id && (

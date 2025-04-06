@@ -12,6 +12,7 @@ const MessageInput = () => {
   const [isRecordingVoiceMessage, setIsRecordingVoiceMessage] = useState(false);
   const chunksRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const timeoutRef = useRef(null);
 
   const handleimageSelect = (e) => {
     const file = e.target.files[0];
@@ -60,7 +61,7 @@ const MessageInput = () => {
     }
   };
 
-  const handleVoiceMessageButtonHold = async () => {
+  const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const mediaRecorder = new MediaRecorder(stream);
     const formData = new FormData();
@@ -83,9 +84,21 @@ const MessageInput = () => {
     setIsRecordingVoiceMessage(true);
   };
 
+  const handleVoiceMessageButtonHold = async (e) => {
+    if (e.type === "touchstart") {
+      e.preventDefault();
+    }
+    timeoutRef.current = setTimeout(() => {
+      startRecording();
+    }, 500);
+  };
+
   const handleVoiceMessageButtonUp = () => {
-    setIsRecordingVoiceMessage(false);
-    mediaRecorderRef.current?.stop();
+    if (isRecordingVoiceMessage) {
+      setIsRecordingVoiceMessage(false);
+      mediaRecorderRef.current?.stop();
+      clearTimeout(timeoutRef.current);
+    }
   };
 
   return (
@@ -144,9 +157,13 @@ const MessageInput = () => {
           <button
             onMouseDown={handleVoiceMessageButtonHold}
             onMouseUp={handleVoiceMessageButtonUp}
+            onMouseLeave={handleVoiceMessageButtonUp}
+            onTouchStart={handleVoiceMessageButtonHold}
+            onTouchEnd={handleVoiceMessageButtonUp}
+            onTouchCancel={handleVoiceMessageButtonUp}
             className={`${
               isRecordingVoiceMessage
-                ? "text-emerald-500 animate-pulse"
+                ? " translate-y-[-20px] scale-120 transition-all bg-emerald-500 rounded-full  animate-pulse"
                 : "text-zinc-500"
             }  hover:cursor-pointer transition-all`}
           >
