@@ -4,6 +4,7 @@ import ChatHeader from "../ChatHeader";
 import MessageInput from "../MessageInput";
 import useStore from "../../zustand/useStore";
 import { Notify } from "notiflix";
+import { CirclePlay, CirclePause, PlayCircle, PauseCircle } from "lucide-react";
 const ChatContainer = () => {
   const {
     messages,
@@ -147,7 +148,7 @@ const ChatContainer = () => {
               {message.voiceMessage && (
                 <div className="w-[20%]">
                   <button onClick={handlePlayPauseAudio}>
-                    {isPlayingAudio ? "Play" : "Pause"}
+                    {isPlayingAudio ? <PlayCircle /> : <PauseCircle />}
                   </button>
                   <audio
                     ref={audioTagRef}
