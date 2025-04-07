@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
 import useChatStore from "../../zustand/useChatStore";
-import { X, Image, Send, AudioLines, ChurchIcon } from "lucide-react";
+import { X, Image, Send, AudioLines, Mic } from "lucide-react";
 import Notiflix from "notiflix";
+
+import ImagePreview from "../ImagePreview";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -104,56 +106,53 @@ const MessageInput = () => {
   return (
     <div className="p-4 w-full">
       {imagePreview && (
-        <div className="mb-3 flex items-center gap-2">
-          <div className="relative">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
-            />
-            <button
-              onClick={removeImage}
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
-              flex items-center justify-center"
-              type="button"
-            >
-              <X className="size-3" />
-            </button>
-          </div>
-        </div>
+        <ImagePreview removeImage={removeImage} imagePreview={imagePreview} />
       )}
 
       <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
         <div className="flex-1 flex gap-2">
-          <input
-            placeholder="Type a message..."
-            type="text"
-            name="messageInput"
-            value={text}
-            onChange={(e) => {
-              setText(e.target.value);
-            }}
-            className="w-full input input-bordered rounded-lg input-sm sm:input-md"
-          />
-          <input
-            type="file"
-            name="file"
-            accept="image/*"
-            className="hidden"
-            ref={fileInput}
-            onChange={handleimageSelect}
-          />
-          <button
-            className={`flex btn btn-circle ${
-              imagePreview ? "text-emerald-400" : "text-zinc-500"
-            }`}
-            onClick={() => {
-              fileInput.current?.click();
-            }}
-            type="button"
-          >
-            <Image size={20} />
-          </button>
+          {!isRecordingVoiceMessage ? (
+            <>
+              <input
+                placeholder="Type a message..."
+                type="text"
+                name="messageInput"
+                value={text}
+                onChange={(e) => {
+                  setText(e.target.value);
+                }}
+                className="w-full input input-bordered rounded-lg input-sm sm:input-md"
+              />
+              <input
+                type="file"
+                name="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInput}
+                onChange={handleimageSelect}
+              />
+              <button
+                className={`flex btn btn-circle ${
+                  imagePreview ? "text-emerald-400" : "text-zinc-500"
+                }`}
+                onClick={() => {
+                  fileInput.current?.click();
+                }}
+                type="button"
+              >
+                <Image size={20} />
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="w-full border-2 border-zinc-400 rounded-lg h-9">
+                <div className="inline-grid m-3 *:[grid-area:1/1]">
+                  <div className="status rounded-full status-lg status-error animate-ping"></div>
+                  <div className="status rounded-full status-lg status-error"></div>
+                </div>
+              </div>
+            </>
+          )}
           <button
             onMouseDown={handleVoiceMessageButtonHold}
             onMouseUp={handleVoiceMessageButtonUp}
@@ -163,21 +162,25 @@ const MessageInput = () => {
             onTouchCancel={handleVoiceMessageButtonUp}
             className={`${
               isRecordingVoiceMessage
-                ? " translate-y-[-20px] scale-120 transition-all bg-emerald-500 rounded-full  animate-pulse"
+                ? "translate-y-[-14px] translate-x-[10px] w-[100px] scale-120 transition-all bg-emerald-500 rounded-full text-zinc-50 animate-pulse"
                 : "text-zinc-500"
-            }  hover:cursor-pointer transition-all`}
+            }  hover:cursor-pointer flex justify-center items-center transition-all mr-1.5`}
           >
-            <AudioLines />
+            {isRecordingVoiceMessage ? <Mic /> : <AudioLines />}
           </button>
         </div>
 
-        <button
-          type="submit"
-          className="btn btn-sm btn-circle"
-          disabled={(!text.trim() && !imagePreview) || isSendingMessage}
-        >
-          <Send size={22} />
-        </button>
+        {!isRecordingVoiceMessage ? (
+          <button
+            type="submit"
+            className="btn btn-sm btn-circle"
+            disabled={(!text.trim() && !imagePreview) || isSendingMessage}
+          >
+            <Send size={22} />
+          </button>
+        ) : (
+          <></>
+        )}
       </form>
     </div>
   );

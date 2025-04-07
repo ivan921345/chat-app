@@ -21,8 +21,6 @@ const ChatContainer = () => {
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
   const [isContextMenuImageSelected, setIsContextMenuImageSelected] =
     useState(false);
-  const audioTagRef = useRef(null);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const messageEndRef = useRef(null);
 
   const { authUser } = useStore();
@@ -84,17 +82,6 @@ const ChatContainer = () => {
     }
   };
 
-  const handlePlayPauseAudio = () => {
-    const audio = audioTagRef.current;
-    if (audio.paused) {
-      audio.play();
-      setIsPlayingAudio(true);
-    } else {
-      audio.pause();
-      setIsPlayingAudio(false);
-    }
-  };
-
   if (isMessagesLoading) {
     return (
       <div className="flex w-[100%] justify-center items-center">
@@ -147,12 +134,10 @@ const ChatContainer = () => {
               )}
               {message.voiceMessage && (
                 <div className="w-[20%]">
-                  <button onClick={handlePlayPauseAudio}>
-                    {isPlayingAudio ? <PlayCircle /> : <PauseCircle />}
-                  </button>
                   <audio
-                    ref={audioTagRef}
-                    className="hidden"
+                    className="
+                  "
+                    controls
                     src={message.voiceMessage}
                   ></audio>
                 </div>

@@ -26,6 +26,8 @@ const useFriendsStore = create((set, get) => ({
       set({ isDeletingFriend: true });
       const res = await api.deleteFriend(friendId);
       set({ friends: res });
+      console.log(res);
+      Notify.success(`Deleted friend`);
       const { selectedUser, setSelectedUser } = useChatStore.getState();
       if (selectedUser?._id === friendId) {
         setSelectedUser(null);
@@ -42,6 +44,7 @@ const useFriendsStore = create((set, get) => ({
       const res = await api.addFriend(friendId);
       console.log(res);
       set({ friends: res });
+      Notify.success(`Added new friend`);
     } catch (error) {
       console.log(error);
       Notify.failure(error.response.data.message);
