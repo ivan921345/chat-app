@@ -16,6 +16,8 @@ const Sidebar = () => {
     fetchFriends();
   }, [fetchFriends]);
 
+  // useMemo(() => first, [second]);
+
   const filteredUsers = showOnlineOnly
     ? friends.filter((friend) => onlineUsers.includes(friend._id))
     : friends;

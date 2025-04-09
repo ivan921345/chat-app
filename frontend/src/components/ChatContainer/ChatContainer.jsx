@@ -4,7 +4,6 @@ import ChatHeader from "../ChatHeader";
 import MessageInput from "../MessageInput";
 import useStore from "../../zustand/useStore";
 import { Notify } from "notiflix";
-import { CirclePlay, CirclePause, PlayCircle, PauseCircle } from "lucide-react";
 const ChatContainer = () => {
   const {
     messages,
@@ -99,7 +98,7 @@ const ChatContainer = () => {
             onContextMenu={(event) => handleContextMenu(event, message._id)}
             key={message._id}
             ref={messageEndRef}
-            className={`chat relative ${
+            className={`chat relative w-auto break-words ${
               message.senderId === selectedUser._id ? "chat-start" : "chat-end"
             }`}
           >
@@ -129,14 +128,22 @@ const ChatContainer = () => {
                   alt="image"
                 />
               )}
-              {message.text && (
-                <p className="text-[0.9rem] sm:text-lg">{message.text}</p>
-              )}
+              {message.text &&
+                (message.text.startsWith("https://") ? (
+                  <a
+                    href={message.text}
+                    className="text-[0.9rem] text-blue-600 underline sm:text-lg"
+                    target="_blank"
+                  >
+                    {message.text}
+                  </a>
+                ) : (
+                  <p className="text-[0.9rem] sm:text-lg">{message.text}</p>
+                ))}
               {message.voiceMessage && (
                 <div className="w-[20%]">
                   <audio
-                    className="
-                  "
+                    className=""
                     controls
                     src={message.voiceMessage}
                   ></audio>
