@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import useChatStore from "../../zustand/useChatStore";
 import { X, Image, Send, AudioLines, Mic } from "lucide-react";
 import Notiflix from "notiflix";
-
 import ImagePreview from "../ImagePreview";
 
 const MessageInput = () => {

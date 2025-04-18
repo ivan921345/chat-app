@@ -16,8 +16,6 @@ const Sidebar = () => {
     fetchFriends();
   }, [fetchFriends]);
 
-  // useMemo(() => first, [second]);
-
   const filteredUsers = showOnlineOnly
     ? friends.filter((friend) => onlineUsers.includes(friend._id))
     : friends;
@@ -49,6 +47,14 @@ const Sidebar = () => {
         </div>
       </div>
       <div className="overflow-y-auto w-full py-3">
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedUser({ fullName: "Chatty bot", profilePic: "" });
+          }}
+        >
+          AI
+        </button>
         {filteredUsers.map((user) => (
           <button
             type="button"

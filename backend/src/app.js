@@ -6,9 +6,9 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth.route");
 const messageRouter = require("./routes/message.route");
-const { app, server } = require("./socket/socket");
-const path = require("path");
 const friendsRouter = require("./routes/friends.route");
+const deepSeekRouter = require("./routes/deepSeek.route");
+const { app, server } = require("./socket/socket");
 
 // middlewares
 app.use(
@@ -27,6 +27,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRouter);
 app.use("/api/friends", friendsRouter);
+app.use("/api/ai", deepSeekRouter);
 
 // middlewares
 app.use((_, res, __) => {

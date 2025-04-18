@@ -21,7 +21,6 @@ const ChatContainer = () => {
   const [isContextMenuImageSelected, setIsContextMenuImageSelected] =
     useState(false);
   const messageEndRef = useRef(null);
-
   const { authUser } = useStore();
 
   useEffect(() => {
@@ -33,6 +32,9 @@ const ChatContainer = () => {
   }, [isContextMenuOpen]);
 
   useEffect(() => {
+    if (selectedUser.fullName === "Chatty bot") {
+      return;
+    }
     getMessages(selectedUser._id);
     subscribeToMessages();
 
@@ -44,6 +46,7 @@ const ChatContainer = () => {
     getMessages,
     subscribeToMessages,
     unsubscribeFromMessages,
+    selectedUser.fullName,
   ]);
   useEffect(() => {
     if (messageEndRef.current && messages) {
