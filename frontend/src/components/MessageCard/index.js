@@ -1,1 +1,1 @@
-export { default } from "./MessageContainer";
+export { default } from "./MessageCard";

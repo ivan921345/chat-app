@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { Notify } from "notiflix";
 import api from "../api";
 import useStore from "./useStore";
-
+import deepSeekApi from "../api/deepSeekApi";
 const useChatStore = create((set, get) => ({
   messages: [],
   selectedUser: null,
@@ -10,6 +10,7 @@ const useChatStore = create((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
   isSendingMessage: false,
+  deepSeekMessages: [],
   getUsers: async () => {
     try {
       set({ isUsersLoading: true });
@@ -43,6 +44,20 @@ const useChatStore = create((set, get) => ({
       Notify.failure(error.message);
     } finally {
       set({ isSendingMessage: false });
+    }
+  },
+  sendDeepSeekMessage: async (prompt) => {
+    try {
+      const res = await deepSeekApi.askDeepSeek(prompt);
+      set({
+        deepSeekMessages: [
+          ...get().deepSeekMessages,
+          { user: prompt, answer: res.content },
+        ],
+      });
+      console.log(res);
+    } catch (error) {
+      Notify.failure(error);
     }
   },
   deleteMessage: async (messageId) => {

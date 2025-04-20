@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import useChatStore from "../../zustand/useChatStore";
-import { X, Image, Send, AudioLines, Mic } from "lucide-react";
+import { Image, Send, AudioLines, Mic } from "lucide-react";
 import Notiflix from "notiflix";
 import ImagePreview from "../ImagePreview";
 
@@ -14,6 +14,7 @@ const MessageInput = () => {
   const chunksRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const timeoutRef = useRef(null);
+  const { sendDeepSeekMessage, selectedUser } = useChatStore();
 
   const handleimageSelect = (e) => {
     const file = e.target.files[0];
@@ -40,6 +41,11 @@ const MessageInput = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+    if (selectedUser.fullName === "Chatty bot") {
+      sendDeepSeekMessage(text);
+      setText("");
+      return;
+    }
     const formData = new FormData();
     if (!text.trim() && !imagePreview) {
       return;

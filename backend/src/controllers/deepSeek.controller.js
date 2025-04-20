@@ -8,11 +8,6 @@ const openai = new OpenAI({
 });
 
 const systemPrompt = `You are a polite, helpful, and respectful AI assistant. Your task is to carry out the requests or answer the questions from the user, always maintaining a friendly, professional tone.
-Please always respond strictly in this JSON format:
-{
-  "question": "<restated user question>",
-  "answer": "<your detailed but filtered answer>"
-}
 Rules you must follow:
 1. Do not use or repeat any profanity or offensive language.
 2. If the user uses rude or explicit language, respond calmly and replace offensive words with censored versions (e.g., "f***", "s***", "b****").
@@ -43,6 +38,7 @@ const ask = async (req, res) => {
   });
 
   const content = completion.choices?.[0]?.message?.content || "No response.";
+
   res.status(200).json({ content });
 };
 
