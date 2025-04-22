@@ -1,5 +1,5 @@
 import { Users } from "lucide-react";
-
+import useGroupStore from "../../zustand/useGroupStore";
 const SidebarUsers = ({
   showOnlineOnly,
   setShowOnlineOnly,
@@ -8,13 +8,14 @@ const SidebarUsers = ({
   selectedUser,
   friends,
 }) => {
+  const { setSelectedGroup } = useGroupStore();
+
   const filteredUsers = showOnlineOnly
     ? friends.filter((friend) => onlineUsers.includes(friend._id))
     : friends;
 
   return (
     <>
-      {" "}
       <div className="border-b border-base-300 w-full p-5">
         <div className="flex items-center gap-2">
           <Users />
@@ -40,6 +41,7 @@ const SidebarUsers = ({
           className="w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors "
           type="button"
           onClick={() => {
+            setSelectedGroup(null);
             setSelectedUser({
               fullName: "Chatty bot",
               profilePic: "/chat.png",
@@ -65,6 +67,7 @@ const SidebarUsers = ({
             key={user._id}
             onClick={() => {
               setSelectedUser(user);
+              setSelectedGroup(null);
             }}
             className={`w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors ${
               selectedUser?._id === user._id

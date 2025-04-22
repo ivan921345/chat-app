@@ -28,6 +28,7 @@ const Sidebar = () => {
           type="radio"
           name="filterTabs"
           className="tab w-[50%]"
+          defaultChecked
           onChange={() => setisGroupsSelected(false)}
           aria-label="Users"
         />
@@ -36,7 +37,6 @@ const Sidebar = () => {
           name="filterTabs"
           className="tab w-[50%]"
           aria-label="Groups"
-          defaultChecked
           onChange={() => setisGroupsSelected(true)}
         />
       </div>

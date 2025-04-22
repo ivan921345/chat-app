@@ -1,7 +1,6 @@
 import axios from "axios";
 const DEV_BACKEND_URL = "http://localhost:5001/api";
-axios.defaults.baseURL = DEV_BACKEND_URL;
-// ("https://chat-app-16po.onrender.com/api");
+axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
 const checkIfUserIsLoggedIn = async () => {
   try {
     const res = await axios.get("/auth/check", {
@@ -135,6 +134,26 @@ const searchFriend = async (userCredentials) => {
   return res.data;
 };
 
+const getAllGroups = async () => {
+  const res = await axios.get("/group", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  return res.data;
+};
+
+const deleteUserFromGroup = async (userToDeleteId, groupId) => {
+  const res = await axios.delete("/group/delete-user", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    data: { userToDeleteId, groupId },
+  });
+  return res.data;
+};
+
 export default {
   checkIfUserIsLoggedIn,
   signUp,
@@ -149,4 +168,6 @@ export default {
   addFriend,
   deleteMessage,
   searchFriend,
+  getAllGroups,
+  deleteUserFromGroup,
 };
