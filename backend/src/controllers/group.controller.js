@@ -3,13 +3,31 @@ const User = require("../models/user.model");
 const ctrlWrapper = require("../helpers/ctrlWrapper.helper");
 const { io, getReceiverSocketId } = require("../socket/socket");
 
-const createGroup = async (req, res) => {
+const getAllGroups = async (req, res) => {
   const user = req.user;
 
+  const groups = await Group.find();
+
+  const filteredGroups = groups.filter(({ users }) => {
+    return users.some(
+      (userToFind) => userToFind._id.toString() === user._id.toString()
+    );
+  });
+
+  res.status(200).json(filteredGroups);
+};
+
+const createGroup = async (req, res) => {
+  const user = req.user;
+  const { title } = req.body;
+
+  const foundUser = await User.findById(user).select("-password");
+
   const newGroup = await Group.create({
-    users: [user._id],
+    users: [foundUser],
     messages: [],
     owner: user._id,
+    title,
   });
 
   res.status(201).json(newGroup);
@@ -52,14 +70,23 @@ const addUser = async (req, res) => {
 
   const userToAddSocketId = getReceiverSocketId(userToAddId);
 
-  if (group.users.includes(userToAddId)) {
+  //searching if group already has user
+  const alreadyAddedUser = group.users.find((user) => {
+    return user._id.toString() === userToAddId.toString();
+  });
+
+  console.log(alreadyAddedUser);
+
+  if (alreadyAddedUser) {
     return res.status(200).json(group);
   }
+
+  const foundUser = await User.findById(userToAddId).select("-password");
 
   const updatedGroup = await Group.findByIdAndUpdate(
     groupId,
     {
-      users: [...group.users, userToAddId],
+      users: [...group.users, foundUser],
     },
     { new: true }
   );
@@ -84,14 +111,22 @@ const deleteUser = async (req, res) => {
     });
   }
 
-  if (!group.users.includes(userToDeleteId)) {
+  const includesFriend = group.users.some(
+    (user) => user._id.toString() === userToDeleteId.toString()
+  );
+
+  if (!includesFriend) {
     return res.status(200).json(group);
   }
+
+  const filteredUsers = group.users.filter(
+    (user) => user._id.toString() !== userToDeleteId.toString()
+  );
 
   const updatedGroup = await Group.findByIdAndUpdate(
     groupId,
     {
-      $pull: { users: userToDeleteId },
+      users: [...filteredUsers],
     },
     { new: true }
   );
@@ -100,7 +135,8 @@ const deleteUser = async (req, res) => {
     return res.status(200).json(updatedGroup);
   }
 
-  io.to(userToDeleteId).emit("deleteUser");
+  io.to(userToDeleteId).emit("deleteUser", updatedGroup);
+  res.status(200).json(updatedGroup);
 };
 
 module.exports = {
@@ -108,4 +144,5 @@ module.exports = {
   addUser: ctrlWrapper(addUser),
   deleteGroup: ctrlWrapper(deleteGroup),
   deleteUser: ctrlWrapper(deleteUser),
+  getAllGroups: ctrlWrapper(getAllGroups),
 };

@@ -13,6 +13,10 @@ const group = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
 });
 
 const Group = mongoose.model("Group", group);

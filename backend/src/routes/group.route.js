@@ -3,6 +3,8 @@ const authenticate = require("../middlewares/authenticate.middleware");
 const groupCtrls = require("../controllers/group.controller");
 const groupRouter = express.Router();
 
+groupRouter.get("/", authenticate, groupCtrls.getAllGroups);
+
 groupRouter.post("/create", authenticate, groupCtrls.createGroup);
 
 groupRouter.delete("/delete/:groupId", authenticate, groupCtrls.deleteGroup);
