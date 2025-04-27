@@ -4,9 +4,31 @@ import NoSelectedChat from "../NoSelectedChat";
 import useGroupStore from "../../zustand/useGroupStore";
 import CloseChatButton from "../../ui/CloseChatButton";
 import GroupSettingsModal from "../GroupSettingsModal";
+import useFriendsStore from "../../zustand/useFriendsStore";
+import { useEffect } from "react";
+
+import { useState } from "react";
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
-  const { onlineUsers } = useStore();
+  const selectedUser = useChatStore((state) => state.selectedUser);
+  const setSelectedUser = useChatStore((state) => state.setSelectedUser);
+
+  const friends = useFriendsStore((state) => state.friends);
+
+  const onlineUsers = useStore((state) => state.onlineUsers);
+
+  const [addUserInputValue, setAddUserInputValue] = useState("");
+  const [filteredFriendsToAdd, setFilteredFriendsToAdd] = useState([]);
+
+  useEffect(() => {
+    const filteredFriends = friends.filter((friend) =>
+      friend.fullName.toLowerCase().includes(addUserInputValue.toLowerCase())
+    );
+    setFilteredFriendsToAdd(filteredFriends);
+  }, [addUserInputValue, friends]);
+
+  const onAddUserInputChange = (e) => {
+    setAddUserInputValue(e.target.value);
+  };
 
   const { selectedGroup, setSelectedGroup } = useGroupStore();
 
@@ -32,7 +54,12 @@ const ChatHeader = () => {
               ))}
             </div>
             <div className="flex items-center">
-              <GroupSettingsModal groupId={selectedGroup._id} />
+              <GroupSettingsModal
+                groupId={selectedGroup._id}
+                onAddUserInputChange={onAddUserInputChange}
+                addUserInputValue={addUserInputValue}
+                filteredFriendsToAdd={filteredFriendsToAdd}
+              />
               <CloseChatButton handleCloseChat={handleCloseChat} />
             </div>
           </>

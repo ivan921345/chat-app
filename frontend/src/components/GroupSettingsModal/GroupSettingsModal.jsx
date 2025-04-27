@@ -1,9 +1,20 @@
 import { EllipsisVertical } from "lucide-react";
 import SearchFriendCard from "../SearchFriendCard";
 import useGroupStore from "../../zustand/useGroupStore";
+import UsernameInput from "../../ui/UsernameInput";
 
-const GroupSettingsModal = ({ groupId }) => {
+const GroupSettingsModal = ({
+  groupId,
+  addUserInputValue,
+  onAddUserInputChange,
+  filteredFriendsToAdd,
+}) => {
   const selectedGroup = useGroupStore((state) => state.selectedGroup);
+  const addUser = useGroupStore((state) => state.addUser);
+
+  const handleAddUserToGroupClick = async (userToAddId, groupId) => {
+    await addUser(userToAddId, groupId);
+  };
 
   return (
     <>
@@ -76,7 +87,35 @@ const GroupSettingsModal = ({ groupId }) => {
               Settings
             </label>
             <div className="tab-content bg-base-100 border-base-300 p-6">
-              Tab content 2
+              <UsernameInput
+                value={addUserInputValue}
+                onChange={onAddUserInputChange}
+              />
+
+              <div className="">
+                {filteredFriendsToAdd.map((filteredFriend) => (
+                  <div key={filteredFriend._id} className="m-5">
+                    {/* <SearchFriendCard
+                      email={filteredFriend.email}
+                      profilePic={filteredFriend.profilePic}
+                      friendId={filteredFriend._id}
+                      filteredFriendToDeleteId={filteredFriend._id}
+                      groupId={groupId}
+                    /> */}
+                    <button
+                      onClick={() =>
+                        handleAddUserToGroupClick(
+                          filteredFriend._id,
+                          selectedGroup._id
+                        )
+                      }
+                    >
+                      {/* todo: nice card */}
+                      add
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
 import useChatStore from "../../zustand/useChatStore";
 import SidebarSkeleton from "../../skeletons/SidebarSkeleton";
-
 import useStore from "../../zustand/useStore";
 import useFriendsStore from "../../zustand/useFriendsStore";
 import SidebarUsers from "../SidebarUsers/SidebarUsers";
 import SidebarGroups from "../SidebarGroups/SidebarGroups";
+
 const Sidebar = () => {
-  const { selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
-  const { friends, fetchFriends } = useFriendsStore();
-  const { onlineUsers } = useStore();
+  const setSelectedUser = useChatStore((state) => state.setSelectedUser);
+  const selectedUser = useChatStore((state) => state.selectedUser);
+  const isUsersLoading = useChatStore((state) => state.isUsersLoading);
+
+  const friends = useFriendsStore((state) => state.friends);
+  const fetchFriends = useFriendsStore((state) => state.fetchFriends);
+
+  const onlineUsers = useStore((state) => state.onlineUsers);
+
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [isGroupsSelected, setisGroupsSelected] = useState(false);
 

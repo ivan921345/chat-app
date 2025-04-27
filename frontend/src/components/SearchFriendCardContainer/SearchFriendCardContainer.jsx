@@ -2,7 +2,7 @@ import SearchFriendCard from "../SearchFriendCard";
 import useFriendsStore from "../../zustand/useFriendsStore";
 import SearchFriendSceleton from "../../skeletons/SearchFriendSceleton";
 const SearchFriendCardContainer = () => {
-  const { foundFriends } = useFriendsStore();
+  const foundFriends = useFriendsStore((state) => state.foundFriends);
 
   return (
     <ul

@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 
 const SharedLayout = () => {
-  const { authUser, logout } = useStore();
+  const authUser = useStore((state) => state.authUser);
+  const logout = useStore((state) => state.logout);
 
   return (
     <>

@@ -1,6 +1,7 @@
 import axios from "axios";
 const DEV_BACKEND_URL = "http://localhost:5001/api";
-axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
+axios.defaults.baseURL = DEV_BACKEND_URL;
+// "https://chat-app-16po.onrender.com/api"
 const checkIfUserIsLoggedIn = async () => {
   try {
     const res = await axios.get("/auth/check", {
@@ -144,6 +145,19 @@ const getAllGroups = async () => {
   return res.data;
 };
 
+const addUserToGroup = async (userToAddId, groupId) => {
+  const res = await axios.post(
+    "/group/add",
+    { userToAddId, groupId },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+  return res.data;
+};
+
 const deleteUserFromGroup = async (userToDeleteId, groupId) => {
   const res = await axios.delete("/group/delete-user", {
     headers: {
@@ -170,4 +184,5 @@ export default {
   searchFriend,
   getAllGroups,
   deleteUserFromGroup,
+  addUserToGroup,
 };

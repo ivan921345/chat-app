@@ -8,7 +8,9 @@ import PasswordInput from "../ui/PasswordInput";
 import EmailInput from "../ui/EmailInput";
 
 const SignupPage = () => {
-  const { signup, isSigningUp } = useStore();
+  const signup = useStore((state) => state.signup);
+  const isSigningUp = useStore((state) => state.isSigningUp);
+
   const [username, setUsername] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("signup username")) || "";

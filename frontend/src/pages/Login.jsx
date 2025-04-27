@@ -16,7 +16,9 @@ const LoginPage = () => {
     }
   });
   const [password, setPassword] = useState("");
-  const { isLogingIn, login } = useStore();
+  const isLogingIn = useStore((state) => state.isLogingIn);
+
+  const login = useStore((state) => state.login);
 
   const handleSubmit = (e) => {
     e.preventDefault();

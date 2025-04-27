@@ -12,10 +12,15 @@ const SearchFriendCard = ({
   userToDeleteId,
   groupId,
 }) => {
-  const { addFriend, deleteFriend } = useFriendsStore();
-  const { authUser } = useStore();
-  const { friends } = useFriendsStore();
-  const { selectedGroup, deleteUser } = useGroupStore();
+  const deleteFriend = useFriendsStore((state) => state.deleteFriend);
+  const addFriend = useFriendsStore((state) => state.addFriend);
+
+  const authUser = useStore((state) => state.authUser);
+  const friends = useFriendsStore((state) => state.friends);
+  const deleteUser = useGroupStore((state) => state.deleteUser);
+
+  const selectedGroup = useGroupStore((state) => state.selectedGroup);
+
   const navigate = useNavigate();
 
   useEffect(() => {}, [friends]);

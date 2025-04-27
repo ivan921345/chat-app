@@ -4,7 +4,11 @@ import { Camera, User, Mail } from "lucide-react";
 import useFriendsStore from "../zustand/useFriendsStore";
 import Notiflix from "notiflix";
 const ProfilePage = () => {
-  const { isUpdatingProfile, authUser, updateProfile } = useStore();
+  const updateProfile = useStore((state) => state.updateProfile);
+  const authUser = useStore((state) => state.authUser);
+
+  const isUpdatingProfile = useStore((state) => state.isUpdatingProfile);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const { friends } = useFriendsStore();
 

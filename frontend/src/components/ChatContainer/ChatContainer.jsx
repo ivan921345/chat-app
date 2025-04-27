@@ -6,16 +6,20 @@ import useStore from "../../zustand/useStore";
 import { Notify } from "notiflix";
 import MessageCard from "../MessageCard";
 const ChatContainer = () => {
-  const {
-    messages,
-    deleteMessage,
-    getMessages,
-    isMessagesLoading,
-    selectedUser,
-    subscribeToMessages,
-    unsubscribeFromMessages,
-    deepSeekMessages,
-  } = useChatStore();
+  const messages = useChatStore((state) => state.messages);
+  const deleteMessage = useChatStore((state) => state.deleteMessage);
+  const getMessages = useChatStore((state) => state.getMessages);
+  const isMessagesLoading = useChatStore((state) => state.isMessagesLoading);
+  const selectedUser = useChatStore((state) => state.selectedUser);
+
+  const subscribeToMessages = useChatStore(
+    (state) => state.subscribeToMessages
+  );
+  const unsubscribeFromMessages = useChatStore(
+    (state) => state.unsubscribeFromMessages
+  );
+  const deepSeekMessages = useChatStore((state) => state.deepSeekMessages);
+
   const [activeMessageId, setActiveMessageId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
