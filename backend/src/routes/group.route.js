@@ -7,7 +7,7 @@ groupRouter.get("/", authenticate, groupCtrls.getAllGroups);
 
 groupRouter.post("/create", authenticate, groupCtrls.createGroup);
 
-groupRouter.delete("/delete/:groupId", authenticate, groupCtrls.deleteGroup);
+groupRouter.delete("/delete", authenticate, groupCtrls.deleteGroup);
 
 groupRouter.post("/add", authenticate, groupCtrls.addUser);
 

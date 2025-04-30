@@ -37,6 +37,15 @@ io.on("connection", (socket) => {
     delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
+  socket.on("joinGroup", (groupId) => {
+    console.log(`Сокет ${socket.id} присоединился к комнате ${groupId}`);
+    socket.join(groupId);
+  });
+
+  socket.on("leaveGroup", (groupId) => {
+    console.log(`Сокет ${socket.id} вышел из комнаты ${groupId}`);
+    socket.leave(groupId);
+  });
 });
 
 module.exports = {

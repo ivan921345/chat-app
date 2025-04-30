@@ -168,6 +168,30 @@ const deleteUserFromGroup = async (userToDeleteId, groupId) => {
   return res.data;
 };
 
+const createGroup = async (title) => {
+  console.log(title);
+  const res = await axios.post(
+    "/group/create",
+    { title },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+  return res.data;
+};
+
+const deleteGroup = async (groupId) => {
+  const res = await axios.delete("/group/delete", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    data: { groupId },
+  });
+  return res.data;
+};
+
 export default {
   checkIfUserIsLoggedIn,
   signUp,
@@ -185,4 +209,6 @@ export default {
   getAllGroups,
   deleteUserFromGroup,
   addUserToGroup,
+  createGroup,
+  deleteGroup,
 };

@@ -2,7 +2,7 @@ const GroupCard = ({ group, handleSetSelectedGroup }) => {
   return (
     <button
       onClick={() => handleSetSelectedGroup(group)}
-      className="min-h-15 flex justify-center w-[100%] btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl mb-10 p-0 md:flex md:justify-start"
+      className="min-h-15 flex justify-center w-[100%] btn btn-xs bg-transparent sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl mb-3 p-0 md:flex md:justify-start"
     >
       <div className="relative flex items-center justify-center w-[50px] h-[50px]">
         <img

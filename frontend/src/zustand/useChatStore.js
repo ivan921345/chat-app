@@ -97,6 +97,7 @@ const useChatStore = create((set, get) => ({
   unsubscribeFromMessages: () => {
     const socket = useStore.getState().socket;
     socket.off("sendMessage");
+    socket.off("deleteMessage");
   },
   setSelectedUser: (selectedUserValue) => {
     set({ selectedUser: selectedUserValue });

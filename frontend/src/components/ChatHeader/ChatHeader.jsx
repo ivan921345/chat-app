@@ -11,9 +11,7 @@ import { useState } from "react";
 const ChatHeader = () => {
   const selectedUser = useChatStore((state) => state.selectedUser);
   const setSelectedUser = useChatStore((state) => state.setSelectedUser);
-
   const friends = useFriendsStore((state) => state.friends);
-
   const onlineUsers = useStore((state) => state.onlineUsers);
 
   const [addUserInputValue, setAddUserInputValue] = useState("");

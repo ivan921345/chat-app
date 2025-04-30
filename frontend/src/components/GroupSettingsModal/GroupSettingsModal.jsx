@@ -2,6 +2,8 @@ import { EllipsisVertical } from "lucide-react";
 import SearchFriendCard from "../SearchFriendCard";
 import useGroupStore from "../../zustand/useGroupStore";
 import UsernameInput from "../../ui/UsernameInput";
+import { UserRoundPlus } from "lucide-react";
+import { useState } from "react";
 
 const GroupSettingsModal = ({
   groupId,
@@ -11,21 +13,30 @@ const GroupSettingsModal = ({
 }) => {
   const selectedGroup = useGroupStore((state) => state.selectedGroup);
   const addUser = useGroupStore((state) => state.addUser);
+  const deleteGroup = useGroupStore((state) => state.deleteGroup);
+  const isDeletingGroup = useGroupStore((state) => state.isDeletingGroup);
+
+  const [userToAddId, setUserToAddId] = useState(null);
 
   const handleAddUserToGroupClick = async (userToAddId, groupId) => {
     await addUser(userToAddId, groupId);
+    setUserToAddId(userToAddId);
+
+    setTimeout(() => {
+      setUserToAddId(null);
+    }, 2000);
   };
 
   return (
     <>
       <button
         className="btn mr-3"
-        onClick={() => document.getElementById("my_modal_3").showModal()}
+        onClick={() => document.getElementById("groupSettingModal").showModal()}
       >
         <EllipsisVertical />
       </button>
-      <dialog id="my_modal_3" className="modal">
-        <div className="modal-box bg-base-300">
+      <dialog id="groupSettingModal" className="modal">
+        <div className="modal-box bg-base-300 rounded-2xl">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
@@ -33,7 +44,7 @@ const GroupSettingsModal = ({
           </form>
           <div className="tabs tabs-lift">
             <label className="tab">
-              <input type="radio" name="my_tabs_4" defaultChecked />
+              <input type="radio" name="settingsGroupTabs" defaultChecked />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -68,7 +79,7 @@ const GroupSettingsModal = ({
             </div>
 
             <label className="tab">
-              <input type="radio" name="my_tabs_4" />
+              <input type="radio" name="settingsGroupTabs" />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -87,6 +98,26 @@ const GroupSettingsModal = ({
               Settings
             </label>
             <div className="tab-content bg-base-100 border-base-300 p-6">
+              <div className="mb-3 flex justify-between">
+                <button
+                  onClick={() => {
+                    document.getElementById("groupSettingModal").close();
+                    deleteGroup(selectedGroup._id);
+                  }}
+                  className="btn btn-outline btn-error rounded-xl"
+                  disabled={isDeletingGroup}
+                >
+                  {isDeletingGroup ? (
+                    <span className="loading loading-ring loading-md"></span>
+                  ) : (
+                    "Delete group"
+                  )}
+                </button>
+                <button className="btn btn-outline btn-secondary rounded-xl">
+                  Rename group
+                </button>
+              </div>
+
               <UsernameInput
                 value={addUserInputValue}
                 onChange={onAddUserInputChange}
@@ -102,17 +133,39 @@ const GroupSettingsModal = ({
                       filteredFriendToDeleteId={filteredFriend._id}
                       groupId={groupId}
                     /> */}
-                    <button
-                      onClick={() =>
-                        handleAddUserToGroupClick(
-                          filteredFriend._id,
-                          selectedGroup._id
-                        )
-                      }
-                    >
-                      {/* todo: nice card */}
-                      add
-                    </button>
+
+                    <div className="flex border-b-2 pb-2">
+                      <img
+                        src={filteredFriend.profilePic || "/avatar.png"}
+                        alt=""
+                        className="size-12"
+                      />
+                      <div className="flex justify-between ml-4 w-[100%]">
+                        <p className="text-gray-400">
+                          {filteredFriend.fullName}
+                        </p>
+                        <button
+                          disabled={userToAddId}
+                          className={`hover:cursor-pointer rounded-md ${
+                            userToAddId === filteredFriend._id
+                              ? "bg-green-500"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleAddUserToGroupClick(
+                              filteredFriend._id,
+                              selectedGroup._id
+                            )
+                          }
+                        >
+                          {userToAddId === filteredFriend._id ? (
+                            "Added"
+                          ) : (
+                            <UserRoundPlus />
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

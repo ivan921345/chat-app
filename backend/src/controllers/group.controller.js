@@ -20,7 +20,7 @@ const getAllGroups = async (req, res) => {
 const createGroup = async (req, res) => {
   const user = req.user;
   const { title } = req.body;
-
+  console.log(title);
   const foundUser = await User.findById(user).select("-password");
 
   const newGroup = await Group.create({
@@ -34,7 +34,7 @@ const createGroup = async (req, res) => {
 };
 
 const deleteGroup = async (req, res) => {
-  const { groupId } = req.params;
+  const { groupId } = req.body;
   const user = req.user;
   const group = await Group.findById(groupId);
   if (!group) {
@@ -43,18 +43,15 @@ const deleteGroup = async (req, res) => {
     });
   }
 
-  console.log("groupId: ", group);
   if (user._id.toString() !== group.owner.toString()) {
     return res.status(401).json({
       message: "You dont have permitions to delete this conversation",
     });
   }
 
-  await Group.findByIdAndDelete(groupId);
+  const deletedGroup = await Group.findByIdAndDelete(groupId);
 
-  res.status(200).json({
-    message: "Group deleted",
-  });
+  res.status(200).json(deletedGroup);
 };
 
 const addUser = async (req, res) => {
@@ -63,7 +60,7 @@ const addUser = async (req, res) => {
   const group = await Group.findById(groupId);
 
   if (user._id.toString() !== group.owner.toString()) {
-    res.status(401).json({
+    return res.status(401).json({
       message: "You dont have permitions to add users",
     });
   }
@@ -74,8 +71,6 @@ const addUser = async (req, res) => {
   const alreadyAddedUser = group.users.find((user) => {
     return user._id.toString() === userToAddId.toString();
   });
-
-  console.log(alreadyAddedUser);
 
   if (alreadyAddedUser) {
     return res.status(200).json(group);
@@ -91,11 +86,19 @@ const addUser = async (req, res) => {
     { new: true }
   );
 
+  const socketIds = updatedGroup.users
+    .map((user) => {
+      return getReceiverSocketId(user._id);
+    })
+    .filter((id) => id !== undefined);
+
+  console.log("socketIds: ", socketIds);
+
   if (!userToAddSocketId) {
     return res.status(200).json(updatedGroup);
   }
 
-  io.to(userToAddSocketId).emit("addUser", updatedGroup);
+  io.to(updatedGroup._id).emit("addUser", updatedGroup);
   res.status(200).json(updatedGroup);
 };
 
@@ -104,7 +107,11 @@ const deleteUser = async (req, res) => {
   const { userToDeleteId, groupId } = req.body;
   const group = await Group.findById(groupId);
   const userToDeleteSocketId = getReceiverSocketId(userToDeleteId);
-
+  const socketIds = group.users.map((user) => {
+    if (getReceiverSocketId(user._id)) {
+      return getReceiverSocketId(user._id);
+    }
+  });
   if (user._id.toString() !== group.owner.toString()) {
     res.status(401).json({
       message: "You dont have permitions to add users",
@@ -135,7 +142,7 @@ const deleteUser = async (req, res) => {
     return res.status(200).json(updatedGroup);
   }
 
-  io.to(userToDeleteId).emit("deleteUser", updatedGroup);
+  io.to([userToDeleteSocketId, ...socketIds]).emit("deleteUser", updatedGroup);
   res.status(200).json(updatedGroup);
 };
 
