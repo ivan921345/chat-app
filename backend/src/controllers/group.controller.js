@@ -98,8 +98,9 @@ const addUser = async (req, res) => {
     return res.status(200).json(updatedGroup);
   }
 
-  io.to(updatedGroup._id).emit("addUser", updatedGroup);
-  res.status(200).json(updatedGroup);
+  socketIds.map((userId) => {
+    io.to(userId).emit("addUser", updatedGroup);
+  });
 };
 
 const deleteUser = async (req, res) => {
@@ -107,11 +108,7 @@ const deleteUser = async (req, res) => {
   const { userToDeleteId, groupId } = req.body;
   const group = await Group.findById(groupId);
   const userToDeleteSocketId = getReceiverSocketId(userToDeleteId);
-  const socketIds = group.users.map((user) => {
-    if (getReceiverSocketId(user._id)) {
-      return getReceiverSocketId(user._id);
-    }
-  });
+
   if (user._id.toString() !== group.owner.toString()) {
     res.status(401).json({
       message: "You dont have permitions to add users",
@@ -138,12 +135,20 @@ const deleteUser = async (req, res) => {
     { new: true }
   );
 
+  const socketIds = updatedGroup.users
+    .map((user) => {
+      return getReceiverSocketId(user._id);
+    })
+    .filter((id) => id !== undefined);
+
   if (!userToDeleteSocketId) {
     return res.status(200).json(updatedGroup);
   }
 
-  io.to([userToDeleteSocketId, ...socketIds]).emit("deleteUser", updatedGroup);
-  res.status(200).json(updatedGroup);
+  socketIds.map((userId) => {
+    io.to(userId).emit("deleteUser", updatedGroup);
+    io.to(userToDeleteSocketId).emit("deleteUser", updatedGroup);
+  });
 };
 
 module.exports = {

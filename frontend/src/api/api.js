@@ -1,5 +1,5 @@
 import axios from "axios";
-const DEV_BACKEND_URL = "https://chat-app-16po.onrender.com/api";
+const DEV_BACKEND_URL = "http://localhost:5001/api";
 axios.defaults.baseURL = DEV_BACKEND_URL;
 // "https://chat-app-16po.onrender.com/api"
 const checkIfUserIsLoggedIn = async () => {

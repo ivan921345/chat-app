@@ -105,6 +105,7 @@ const useGroupStore = create((set, get) => ({
       const filteredGroups = get().groups.filter(
         (group) => group._id !== updatedGroup._id
       );
+      console.log(`qweqweqwe`);
       get().getGroups();
       set({ groups: [...filteredGroups] });
     });
