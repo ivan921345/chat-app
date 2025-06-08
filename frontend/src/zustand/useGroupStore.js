@@ -8,9 +8,8 @@ const useGroupStore = create((set, get) => ({
   isFetchingGroups: false,
   selectedGroup: null,
   isDeletingUser: false,
-
+  selectedGroupMessages: [],
   isDeletingGroup: false,
-
   isAddingUser: false,
   getGroups: async () => {
     try {
@@ -28,12 +27,7 @@ const useGroupStore = create((set, get) => ({
     try {
       set({ isDeletingGroup: true });
       const deletedGroup = await api.deleteGroup(groupId);
-
-      const filteredGroups = get().groups.filter(
-        (group) => group._id !== deletedGroup._id
-      );
-
-      set({ groups: filteredGroups });
+      Notify.success(`Group ${deletedGroup.title} has been deleted`);
     } catch (error) {
       Notify.failure(error?.response?.body?.message);
     } finally {
@@ -91,6 +85,13 @@ const useGroupStore = create((set, get) => ({
       set({ isDeletingUser: false });
     }
   },
+  sendGroupMessage: async (groupId, data) => {
+    try {
+      await api.sendMessage(groupId, data);
+    } catch (error) {
+      Notify.failure(error);
+    }
+  },
   subsribeForGroupEvents: () => {
     const socket = useStore.getState().socket;
     socket.on("addUser", (updatedGroup) => {
@@ -101,13 +102,24 @@ const useGroupStore = create((set, get) => ({
       set({ groups: [updatedGroup, ...filteredGroups] });
     });
     socket.on("deleteUser", (updatedGroup) => {
-      // проблема, когда юзер залогинен с другого акка даже так удаляеться грпуппа у ВСЕХ кроме админа
       const filteredGroups = get().groups.filter(
         (group) => group._id !== updatedGroup._id
       );
-      console.log(`qweqweqwe`);
       get().getGroups();
+      set({ groups: [...filteredGroups, updatedGroup] });
+    });
+    socket.on("sendMessage", ({ messages }) => {
+      console.log("sendGroup message");
+      set({ selectedGroupMessages: [...messages] });
+    });
+    socket.on("deleteGroup", (deletedGroup) => {
+      const filteredGroups = get().groups.filter(
+        (group) => group._id !== deletedGroup._id
+      );
       set({ groups: [...filteredGroups] });
+      if (get().selectedGroup._id === deletedGroup._id) {
+        set({ selectedGroup: null });
+      }
     });
   },
   unsubsribeFromGroupEvents: () => {
@@ -117,6 +129,7 @@ const useGroupStore = create((set, get) => ({
   },
   setSelectedGroup: (group) => {
     set({ selectedGroup: group });
+    set({ selectedGroupMessages: group.messages });
   },
 }));
 

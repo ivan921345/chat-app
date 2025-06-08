@@ -3,29 +3,16 @@ import useGroupStore from "../../zustand/useGroupStore";
 import GroupCard from "../GroupCard";
 import useChatStore from "../../zustand/useChatStore";
 import AddGroupModal from "../AddGroupModal/AddGroupModal";
-import useStore from "../../zustand/useStore";
 
 const SidebarGroups = () => {
-  const {
-    getGroups,
-    groups,
-    isFetchingGroups,
-    setSelectedGroup,
-    selectedGroup,
-  } = useGroupStore();
+  const { getGroups, groups, isFetchingGroups, setSelectedGroup } =
+    useGroupStore();
 
   const setSelectedUser = useChatStore((state) => state.setSelectedUser);
 
   const subsribeForGroupEvents = useGroupStore(
     (state) => state.subsribeForGroupEvents
   );
-
-  const socket = useStore((state) => state.socket);
-  useEffect(() => {
-    if (selectedGroup?._id) {
-      socket.emit("joinGroup", selectedGroup._id);
-    }
-  }, [selectedGroup?._id, socket]);
 
   useEffect(() => {
     subsribeForGroupEvents();

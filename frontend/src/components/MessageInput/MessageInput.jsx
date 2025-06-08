@@ -3,6 +3,7 @@ import useChatStore from "../../zustand/useChatStore";
 import { Image, Send, AudioLines, Mic } from "lucide-react";
 import Notiflix from "notiflix";
 import ImagePreview from "../ImagePreview";
+import useGroupStore from "../../zustand/useGroupStore";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -15,6 +16,9 @@ const MessageInput = () => {
   const mediaRecorderRef = useRef(null);
   const timeoutRef = useRef(null);
   const { sendDeepSeekMessage, selectedUser } = useChatStore();
+
+  const selectedGroup = useGroupStore((state) => state.selectedGroup);
+  const sendGroupMessage = useGroupStore((state) => state.sendGroupMessage);
 
   const handleimageSelect = (e) => {
     const file = e.target.files[0];
@@ -41,7 +45,7 @@ const MessageInput = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (selectedUser.fullName === "Chatty bot") {
+    if (selectedUser?.fullName === "Chatty bot") {
       sendDeepSeekMessage(text);
       setText("");
       return;
@@ -55,7 +59,12 @@ const MessageInput = () => {
       formData.append("image", selectedImage);
     }
     try {
-      await sendMessage(formData);
+      if (selectedGroup) {
+        await sendGroupMessage(selectedGroup._id, formData);
+      }
+      if (selectedUser) {
+        await sendMessage(formData);
+      }
 
       setText("");
       setImagePreview(null);
@@ -81,6 +90,9 @@ const MessageInput = () => {
       const blob = new Blob(chunksRef.current, { type: "audio/webm" });
       if (blob.size !== 0) {
         formData.append("voice", blob);
+        if (selectedGroup) {
+          return;
+        }
         await sendMessage(formData);
       }
     };

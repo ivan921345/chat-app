@@ -3,8 +3,7 @@ import authApi from "../api";
 import notiflix from "notiflix";
 import { io } from "socket.io-client";
 const DEV_BACKEND_URL = "http://localhost:5001/";
-const BASE_BACKEND_URL = DEV_BACKEND_URL;
-// "https://chat-app-16po.onrender.com/"
+const BASE_BACKEND_URL = "https://chat-app-16po.onrender.com/";
 const store = create((set, get) => ({
   authUser: null,
   isSigningUp: false,

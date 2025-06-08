@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import useChatStore from "../../zustand/useChatStore";
 import ChatHeader from "../ChatHeader";
 import MessageInput from "../MessageInput";
-import useStore from "../../zustand/useStore";
-import { Notify } from "notiflix";
 import MessageCard from "../MessageCard";
 const ChatContainer = () => {
   const messages = useChatStore((state) => state.messages);
@@ -20,21 +18,7 @@ const ChatContainer = () => {
   );
   const deepSeekMessages = useChatStore((state) => state.deepSeekMessages);
 
-  const [activeMessageId, setActiveMessageId] = useState(null);
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
-  const [isContextMenuImageSelected, setIsContextMenuImageSelected] =
-    useState(false);
   const messageEndRef = useRef(null);
-  const { authUser } = useStore();
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isContextMenuOpen]);
 
   useEffect(() => {
     if (selectedUser.fullName === "Chatty bot") {
@@ -58,36 +42,6 @@ const ChatContainer = () => {
       messageEndRef.current.scrollIntoView();
     }
   }, [messages]);
-
-  const handleContextMenu = (event, messageId) => {
-    event.preventDefault();
-    if (event.target.nodeName === "IMG") {
-      setIsContextMenuImageSelected(true);
-      setMenuPosition({ x: event.pageX, y: event.pageY });
-      setActiveMessageId(messageId);
-      setIsContextMenuOpen(true);
-      return;
-    }
-    setIsContextMenuImageSelected(false);
-    setMenuPosition({ x: event.pageX, y: event.pageY });
-    setActiveMessageId(messageId);
-    setIsContextMenuOpen(true);
-  };
-
-  const handleClickOutside = () => {
-    setIsContextMenuOpen(false);
-    setActiveMessageId(null);
-  };
-
-  const handleCopyMessage = async (message) => {
-    try {
-      await navigator.clipboard.writeText(message);
-      Notify.success("Message copied to your clipboard");
-    } catch (error) {
-      Notify.failure("Error while copying message");
-      console.log(error);
-    }
-  };
 
   if (isMessagesLoading) {
     return (
@@ -120,14 +74,7 @@ const ChatContainer = () => {
               <div key={message._id}>
                 <MessageCard
                   message={message}
-                  handleContextMenu={handleContextMenu}
-                  handleCopyMessage={handleCopyMessage}
-                  authUser={authUser}
-                  menuPosition={menuPosition}
-                  isContextMenuImageSelected={isContextMenuImageSelected}
                   deleteMessage={deleteMessage}
-                  activeMessageId={activeMessageId}
-                  selectedUser={selectedUser}
                   messageEndRef={messageEndRef}
                 />
               </div>

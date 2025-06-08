@@ -4,6 +4,7 @@ const Message = require("../models/message.model");
 const cloudinary = require("../services/cloudinary.service");
 const { getReceiverSocketId, io } = require("../socket/socket");
 const streamUpload = require("../helpers/uploadStream.helper");
+const Group = require("../models/group.model");
 
 const getUsersForSidebar = async (req, res) => {
   const loggedInUserId = req.user._id;
@@ -72,30 +73,125 @@ const saveMessage = async (
   res.status(201).json(newMessage);
 };
 
+const saveGroupMessage = async (
+  text,
+  imgUrl,
+  voiceMessageUrl,
+  groupId,
+  profilePic,
+  senderId,
+  fullName,
+  res
+) => {
+  const updatedGroup = await Group.findByIdAndUpdate(
+    groupId,
+    {
+      $push: {
+        messages: {
+          text,
+          profilePic,
+          imgUrl,
+          voiceMessageUrl,
+          senderId,
+          fullName,
+        },
+      },
+    },
+    { new: true }
+  );
+
+  const socketIds = updatedGroup.users
+    .map((user) => {
+      return getReceiverSocketId(user._id);
+    })
+    .filter((id) => id !== undefined);
+
+  socketIds.forEach((socketId) => {
+    io.to(socketId).emit("sendMessage", updatedGroup);
+  });
+  res.status(201).json({
+    message: "Sent",
+  });
+};
+
 const sendMessages = async (req, res) => {
   const { text } = req.body;
-  const recieverId = req.params.id;
+  const recieverId = req?.params?.id;
   const senderId = req.user._id;
+  const profilePic = req.user.profilePic;
+  const fullName = req.user.fullName;
 
-  console.log("files ", req.files);
+  const foundGroup = await Group.findById(recieverId);
 
-  if (req.files.voice) {
-    const { secure_url } = await streamUpload(
-      req.files.voice[0].buffer,
-      "video"
-    );
-    await saveMessage(senderId, recieverId, "", "", secure_url, res);
-    return;
-  }
+  if (foundGroup) {
+    if (req?.files?.voice || req?.files?.image) {
+      console.log("Found group: ", req.files);
+      if (req?.files?.voice) {
+        const { secure_url } = await streamUpload(
+          req.files.voice[0].buffer,
+          "video"
+        );
+        await saveGroupMessage(
+          text,
+          "",
+          secure_url,
+          recieverId,
+          profilePic,
+          senderId,
+          fullName,
+          res
+        );
+        return;
+      }
 
-  if (req.files.image) {
-    const { secure_url } = await streamUpload(
-      req.files.image[0].buffer,
-      "image"
-    );
-    saveMessage(senderId, recieverId, text, secure_url, "", res);
+      if (req?.files?.image) {
+        const { secure_url } = await streamUpload(
+          req.files.image[0].buffer,
+          "image"
+        );
+        await saveGroupMessage(
+          text,
+          secure_url,
+          "",
+          recieverId,
+          profilePic,
+          senderId,
+          fullName,
+          res
+        );
+        return;
+      }
+    } else {
+      saveGroupMessage(
+        text,
+        "",
+        "",
+        recieverId,
+        profilePic,
+        senderId,
+        fullName,
+        res
+      );
+    }
   } else {
-    saveMessage(senderId, recieverId, text, "", "", res);
+    if (req.files.voice) {
+      const { secure_url } = await streamUpload(
+        req.files.voice[0].buffer,
+        "video"
+      );
+      await saveMessage(senderId, recieverId, "", "", secure_url, res);
+      return;
+    }
+
+    if (req.files.image) {
+      const { secure_url } = await streamUpload(
+        req.files.image[0].buffer,
+        "image"
+      );
+      saveMessage(senderId, recieverId, text, secure_url, "", res);
+    } else {
+      saveMessage(senderId, recieverId, text, "", "", res);
+    }
   }
 };
 

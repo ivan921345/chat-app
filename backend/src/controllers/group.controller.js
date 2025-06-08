@@ -50,6 +50,16 @@ const deleteGroup = async (req, res) => {
   }
 
   const deletedGroup = await Group.findByIdAndDelete(groupId);
+  console.log(deletedGroup);
+  const socketIds = deletedGroup.users
+    .map((user) => {
+      return getReceiverSocketId(user._id);
+    })
+    .filter((id) => id !== undefined);
+
+  socketIds.map((userId) => {
+    io.to(userId).emit("deleteGroup", deletedGroup);
+  });
 
   res.status(200).json(deletedGroup);
 };
