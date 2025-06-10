@@ -91,6 +91,7 @@ const MessageInput = () => {
       if (blob.size !== 0) {
         formData.append("voice", blob);
         if (selectedGroup) {
+          await sendGroupMessage(selectedGroup._id, formData);
           return;
         }
         await sendMessage(formData);

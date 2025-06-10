@@ -1,9 +1,11 @@
 import axios from "axios";
 const DEV_BACKEND_URL = "http://localhost:5001/api";
-axios.defaults.baseURL = "https://chat-app-16po.onrender.com/";
+const api = axios.create({
+  baseURL: "https://chat-app-16po.onrender.com/api",
+});
 
 const askDeepSeek = async (prompt) => {
-  const res = await axios.post(
+  const res = await api.post(
     "/ai/ask",
     { prompt },
     {

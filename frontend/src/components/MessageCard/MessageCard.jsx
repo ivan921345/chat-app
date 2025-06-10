@@ -117,11 +117,21 @@ const MessageCard = ({ message, messageEndRef, deleteMessage }) => {
           ) : (
             <p className="text-[0.9rem] sm:text-lg">{message.text}</p>
           ))}
-        {message.voiceMessage && (
-          <div className="w-[20%]">
-            <audio className="" controls src={message.voiceMessage}></audio>
-          </div>
-        )}
+        {selectedGroup
+          ? message.voiceMessageUrl && (
+              <div className="w-[20%]">
+                <audio
+                  className=""
+                  controls
+                  src={message.voiceMessageUrl}
+                ></audio>
+              </div>
+            )
+          : message.voiceMessage && (
+              <div className="w-[20%]">
+                <audio className="" controls src={message.voiceMessage}></audio>
+              </div>
+            )}
       </div>
       {activeMessageId === message._id && (
         <ul className={`absolute top-${menuPosition.y} left-${menuPosition.x}`}>
