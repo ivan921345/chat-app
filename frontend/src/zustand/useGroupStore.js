@@ -129,7 +129,7 @@ const useGroupStore = create((set, get) => ({
   },
   setSelectedGroup: (group) => {
     set({ selectedGroup: group });
-    set({ selectedGroupMessages: group.messages });
+    set({ selectedGroupMessages: group?.messages });
   },
 }));
 

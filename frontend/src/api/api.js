@@ -1,9 +1,11 @@
 import axios from "axios";
 const DEV_BACKEND_URL = "http://localhost:5001/api";
-axios.defaults.baseURL = "https://chat-app-16po.onrender.com/api";
+const api = axios.create({
+  baseURL: "https://chat-app-16po.onrender.com/api",
+});
 const checkIfUserIsLoggedIn = async () => {
   try {
-    const res = await axios.get("/auth/check", {
+    const res = await api.get("/auth/check", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -16,7 +18,7 @@ const checkIfUserIsLoggedIn = async () => {
 };
 
 const signUp = async (body) => {
-  const res = await axios.post("/auth/signup", body, {
+  const res = await api.post("/auth/signup", body, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -24,7 +26,7 @@ const signUp = async (body) => {
   return res.data;
 };
 const logout = async () => {
-  const res = await axios.post(
+  const res = await api.post(
     "/auth/logout",
     {},
     {
@@ -36,7 +38,7 @@ const logout = async () => {
   return res.data;
 };
 const login = async (body) => {
-  const res = await axios.post("/auth/login", body, {
+  const res = await api.post("/auth/login", body, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -44,7 +46,7 @@ const login = async (body) => {
   return res.data;
 };
 const changeProfile = async (data) => {
-  const res = await axios.put("/auth/update-profile", data, {
+  const res = await api.put("/auth/update-profile", data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -53,7 +55,7 @@ const changeProfile = async (data) => {
 };
 
 const fetchUsers = async () => {
-  const res = await axios.get("/messages/users", {
+  const res = await api.get("/messages/users", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -63,7 +65,7 @@ const fetchUsers = async () => {
 };
 
 const fetchMessages = async (id) => {
-  const res = await axios.get(`/messages/${id}`, {
+  const res = await api.get(`/messages/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -71,7 +73,7 @@ const fetchMessages = async (id) => {
   return res.data;
 };
 const sendMessage = async (selectedUserId, data) => {
-  const res = await axios.post(`/messages/send/${selectedUserId}`, data, {
+  const res = await api.post(`/messages/send/${selectedUserId}`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -79,7 +81,7 @@ const sendMessage = async (selectedUserId, data) => {
   return res.data;
 };
 const deleteMessage = async (messageId) => {
-  const res = await axios.delete(`/messages/delete/${messageId}`, {
+  const res = await api.delete(`/messages/delete/${messageId}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -88,7 +90,7 @@ const deleteMessage = async (messageId) => {
 };
 
 const fetchFriends = async () => {
-  const res = await axios.get("/friends", {
+  const res = await api.get("/friends", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -98,7 +100,7 @@ const fetchFriends = async () => {
 };
 
 const deleteFriend = async (friendId) => {
-  const res = await axios.delete("/friends/delete", {
+  const res = await api.delete("/friends/delete", {
     data: { friendId },
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -109,7 +111,7 @@ const deleteFriend = async (friendId) => {
 };
 
 const addFriend = async (friendId) => {
-  const res = await axios.post(
+  const res = await api.post(
     "/friends/add",
     { friendId },
     {
@@ -122,7 +124,7 @@ const addFriend = async (friendId) => {
 };
 
 const searchFriend = async (userCredentials) => {
-  const res = await axios.post(
+  const res = await api.post(
     `/friends/search/${userCredentials}`,
     {},
     {
@@ -135,7 +137,7 @@ const searchFriend = async (userCredentials) => {
 };
 
 const getAllGroups = async () => {
-  const res = await axios.get("/group", {
+  const res = await api.get("/group", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -145,7 +147,7 @@ const getAllGroups = async () => {
 };
 
 const addUserToGroup = async (userToAddId, groupId) => {
-  const res = await axios.post(
+  const res = await api.post(
     "/group/add",
     { userToAddId, groupId },
     {
@@ -158,7 +160,7 @@ const addUserToGroup = async (userToAddId, groupId) => {
 };
 
 const deleteUserFromGroup = async (userToDeleteId, groupId) => {
-  const res = await axios.delete("/group/delete-user", {
+  const res = await api.delete("/group/delete-user", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -169,7 +171,7 @@ const deleteUserFromGroup = async (userToDeleteId, groupId) => {
 
 const createGroup = async (title) => {
   console.log(title);
-  const res = await axios.post(
+  const res = await api.post(
     "/group/create",
     { title },
     {
@@ -182,7 +184,7 @@ const createGroup = async (title) => {
 };
 
 const deleteGroup = async (groupId) => {
-  const res = await axios.delete("/group/delete", {
+  const res = await api.delete("/group/delete", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },

@@ -5,7 +5,6 @@ import MessageCard from "../MessageCard";
 import { nanoid } from "nanoid";
 import { useEffect, useRef } from "react";
 const GroupChatContainer = () => {
-  const selectedGroup = useGroupStore((state) => state.selectedGroup);
   const selectedGroupMessages = useGroupStore(
     (state) => state.selectedGroupMessages
   );
