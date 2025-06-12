@@ -18,6 +18,7 @@ app.use(
       "http://localhost:5173",
       "https://ivan921345.github.io/chat-app",
       "https://chat-app-six-psi-67.vercel.app",
+      "https://chat-app-git-main-ivan921345s-projects.vercel.app",
     ],
     credentials: true,
   })
